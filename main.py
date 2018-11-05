@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import os
 import sys
-import data_import
-import initialize
-import evaluate
 import time
-
+import src.initialize as initialize
+import src.evaluate as evaluate
+import src.data_import as data_import
 
 def main():
     """ Entry point of program """
@@ -91,10 +90,10 @@ class CodeTimer:
         self.name = "'" + name + "'" if name else ''
 
     def __enter__(self):
-        self.start = time.clock()
+        self.start = time.perf_counter()
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.took = (time.clock() - self.start) * 1000.0
+        self.took = (time.perf_counter() - self.start) * 1000.0
         print("%s: %.2f ms" % (self.name, self.took))
 
 
