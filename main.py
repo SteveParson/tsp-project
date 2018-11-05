@@ -5,6 +5,8 @@ import time
 import src.initialize as initialize
 import src.evaluate as evaluate
 import src.data_import as data_import
+import src.offspring_generation as offspring_generation
+import src.select as select
 
 def main():
     """ Entry point of program """
@@ -25,8 +27,34 @@ def main():
         initialize.gen_population(args)
 
     # give an idea of evaluation function performance
-    with CodeTimer('initial eval time: '):
+    with CodeTimer('initial eval time'):
         evaluate.eval_population(args)
+
+    with CodeTimer('parent selection'):
+        select.parents(args)
+
+    with CodeTimer('recombination'):
+        offspring_generation.recombination(args)
+
+    with CodeTimer('mutation'):
+        offspring_generation.mutation(args)
+
+    with CodeTimer('survivor selection'):
+        select.survivors(args)
+
+    evaluate.print_stats()
+
+    for i in range(0, args['generations']):
+        print("\nGeneration %d: " % i)
+        evaluate.eval_population(args)
+        select.parents(args)
+        offspring_generation.recombination(args)
+        offspring_generation.mutation(args)
+        select.survivors(args)
+        evaluate.print_stats()
+
+
+
 
 
 def parse_args():
