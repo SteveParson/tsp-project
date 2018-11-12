@@ -8,6 +8,7 @@ import src.data_import as data_import
 import src.offspring_generation as offspring_generation
 import src.select as select
 
+
 def main():
     """ Entry point of program """
 
@@ -39,22 +40,25 @@ def main():
     with CodeTimer('mutation'):
         offspring_generation.mutation(args)
 
+    with CodeTimer('offspring_fitness'):
+        evaluate.eval_offspring(args)
+
     with CodeTimer('survivor selection'):
         select.survivors(args)
 
-    evaluate.print_stats()
+    evaluate.print_stats(args)
 
     for i in range(0, args['generations']):
-        print("\nGeneration %d: " % i)
+        print("Generation %d: " % i)
         evaluate.eval_population(args)
         select.parents(args)
         offspring_generation.recombination(args)
         offspring_generation.mutation(args)
+        evaluate.eval_offspring(args)
         select.survivors(args)
-        evaluate.print_stats()
+        evaluate.print_stats(args)
 
-
-
+    evaluate.print_final(args)
 
 
 def parse_args():
@@ -64,19 +68,23 @@ def parse_args():
     """
 
     # TODO: parse everything from command line? maybe not necessary
-
+    print("EA-TSP by E Garg, S Parson, T Rahman, J Wagner")
     if len(sys.argv) != 2:
         die("Wrong number of parameters")
 
-    #
     if not os.path.isfile(sys.argv[1]):
         die("File '" + str(sys.argv[1]) + "' does not exist.")
 
     args = {
         'datafile': sys.argv[1],
-        'pop_size': 100,
+        'pop_size': 10,
         'initialize_method': 'random',
-        'generations': 10000,
+        'parent_selection': 'random',
+        'recombination': 'cut_crossfill',
+        'crossover_rate': 0.9,
+        'survivor_selection': 'mu_plus_lambda',
+        'mutation_rate': 1,
+        'generations': 1000,
     }
 
     print_banner(args)
@@ -90,7 +98,6 @@ def print_banner(arguments):
     :return:
     """
 
-    print("EA-TSP by E Garg, S Parson, T Rahman, J Wagner")
     print("\nRuntime parameters:")
     for k, v in sorted(arguments.items()):
         print("\t'%s': %s" % (str(k), str(v)))
@@ -105,7 +112,7 @@ def die(error):
     """
 
     print("Error: " + error)
-    print("Usage: python3 " + str(sys.argv[0]) +
+    print("Usage: python3.5 " + str(sys.argv[0]) +
           " datafile")
     raise SystemExit
 

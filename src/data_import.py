@@ -1,3 +1,6 @@
+import math
+
+
 def parse_datafile(args):
     """ Parse the TSP data file
 
@@ -29,7 +32,7 @@ def calc_distance_matrix(args):
 
     for city1 in all_cities:
         for city2 in all_cities:
-            distance_matrix[city1][city2] = (dataset[city1][0] - dataset[city2][0]) ** 2 + (
-                        dataset[city1][1] - dataset[city2][1]) ** 2
+            distance_matrix[city1][city2] = math.sqrt((dataset[city1][0] - dataset[city2][0]) ** 2 + (
+                    dataset[city1][1] - dataset[city2][1]) ** 2)
 
     args['distance_matrix'] = distance_matrix
