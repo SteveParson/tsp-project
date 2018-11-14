@@ -8,7 +8,7 @@ def gen_population(args):
     chromosome_range = range(chromosome_length)
     pop = []
 
-    if (initialize_method == 'random'):
+    if initialize_method == 'random':
         for i in range(pop_size):
             pop.append(np.random.permutation(chromosome_range))
 

@@ -1,5 +1,3 @@
-import numpy as np
-
 from .utility import *
 
 
@@ -31,7 +29,9 @@ def survivors(args):
     :return: Reassigns 'population' and 'fitness' in the dictionary
     """
 
-    if args['survivor_selection'] == 'mu_plus_lambda':
+    survivor_selection = args['survivor_selection']
+
+    if survivor_selection == 'mu_plus_lambda':
         # pool the population and offspring
         full_population = args['population'] + args['offspring']
         full_fitness = args['fitness'] + args['offspring_fitness']
@@ -53,7 +53,7 @@ def survivors(args):
         return
 
     # TODO: use numpy to do this
-    if args['survivors_selection'] == 'random':
+    if survivor_selection == 'random':
         full_population = args['population'] + args['offspring']
         full_fitness = args['fitness'] + args['offspring_fitness']
         full_pool = len(full_population)

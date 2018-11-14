@@ -49,7 +49,7 @@ def main():
 
     evaluate.print_stats(args)
 
-    for i in range(0, args['generations']):
+    for i in range(args['generations']):
         print("Generation %d: " % i)
         evaluate.eval_population(args)
         select.parents(args)

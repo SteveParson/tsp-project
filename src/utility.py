@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def rankify(values):
     """ Rank an array
 
