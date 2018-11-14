@@ -78,7 +78,7 @@ def parse_args():
 
     args = {
         'datafile': sys.argv[1],
-        'pop_size': 4663,
+        'pop_size': 20,
         'initialize_method': 'random',
         'parent_selection': 'random',
         'recombination': 'cut_crossfill',
