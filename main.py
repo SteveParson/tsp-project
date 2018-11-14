@@ -2,9 +2,10 @@
 import os
 import sys
 import time
-import src.initialize as initialize
-import src.evaluate as evaluate
+
 import src.data_import as data_import
+import src.evaluate as evaluate
+import src.initialize as initialize
 import src.offspring_generation as offspring_generation
 import src.select as select
 
@@ -77,7 +78,7 @@ def parse_args():
 
     args = {
         'datafile': sys.argv[1],
-        'pop_size': 10,
+        'pop_size': 4663,
         'initialize_method': 'random',
         'parent_selection': 'random',
         'recombination': 'cut_crossfill',

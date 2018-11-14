@@ -1,5 +1,7 @@
 import numpy as np
 
+from .utility import *
+
 
 def parents(args):
     """ Selects parents to form a mating pool
@@ -9,6 +11,9 @@ def parents(args):
     """
     # random selection for testing purposes
     pop_size = args['pop_size']
+
+    # use mp_size if availab,e otherwise set it to half of the population size
+    # this default selection and assignment should happen somewhere else
     mp_size = args.get('mp_size', int(pop_size / 2))
     args['mp_size'] = mp_size
 
@@ -30,9 +35,9 @@ def survivors(args):
         # pool the population and offspring
         full_population = args['population'] + args['offspring']
         full_fitness = args['fitness'] + args['offspring_fitness']
+        mu = args['pop_size']
 
         # rank their fitnesses, keep only mu
-        mu = args['pop_size']
         rank_vector = rankify(full_fitness)[:mu]
 
         # keep only the top mu individuals
@@ -47,6 +52,7 @@ def survivors(args):
         args['fitness'] = fitness
         return
 
+    # TODO: use numpy to do this
     if args['survivors_selection'] == 'random':
         full_population = args['population'] + args['offspring']
         full_fitness = args['fitness'] + args['offspring_fitness']
@@ -65,17 +71,7 @@ def survivors(args):
         # reassign the dictionary
         args['population'] = population
         args['fitness'] = fitness
-
     return
-
-
-def rankify(values):
-    """ Rank an array
-
-    :param values: An array of values
-    :return: A ranking for the array of values
-    """
-    return list(np.argsort(np.array(values)))[::-1]
 
 
 def random_selection(individuals, number_to_choose, with_replace=False):

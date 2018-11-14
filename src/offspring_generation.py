@@ -24,7 +24,6 @@ def recombination(args):
             offspring.append(offspring2)
 
         args['offspring'] = offspring
-        return
 
 
 def cut_crossfill(args, parent1, parent2):
@@ -65,6 +64,7 @@ def cut_crossfill(args, parent1, parent2):
 def mutation(args):
     mutation_rate = args['mutation_rate']
     offspring = args['offspring']
+
     for i in range(len(offspring)):
         if random.random() < mutation_rate:
             offspring[i] = permutation_swap(offspring[i])
@@ -85,5 +85,3 @@ def permutation_swap(individual):
     # swap the elements
     mutant[point1], mutant[point2] = mutant[point2], mutant[point1]
     return mutant
-
-    pass
