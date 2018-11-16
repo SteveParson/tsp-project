@@ -1,4 +1,8 @@
 .idea/
+misc.xml
+modules.xml
+vcs.xml
+workspace.xml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
