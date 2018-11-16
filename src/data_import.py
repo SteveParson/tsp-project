@@ -15,7 +15,7 @@ def parse_datafile(args):
             elements = line.split()
             dataset[int(elements[0]) - 1] = (float(elements[1]), float(elements[2]))
     args['dataset'] = dataset
-
+    print(args['dataset'])
 
 def calc_distance_matrix(args):
     """ Calculate the distance matrix
