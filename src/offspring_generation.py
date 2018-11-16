@@ -1,5 +1,5 @@
 import random
-import numpy as np
+
 from .utility import *
 
 
@@ -27,16 +27,20 @@ def recombination(args):
 
     if recombination_type == 'best_order':
         best_individual = population[np.argmax(fitness)]
+
         n = args['box_cutting_points_n']
         J = len(population[0])
-        print("j, population0, len", J, population[0], len(population[0]))
-        print("n ", n)
+
         if not (2 <= n <= J - 1):
             die("box_cutting_points_n is out of range")
+
         offspring = []
         i = 0
 
         while len(offspring) < mp_size:
+            # print("Parents i ", parents[i])
+            # print("Parents i ", parents[i+1])
+            # print("Population  ", population[parents[i]])
             parent1 = population[parents[i]]
             parent2 = population[parents[i + 1]]
             if random.random() < crossover_rate:
@@ -65,11 +69,22 @@ def best_order(args, J, n, parent1, parent2, best_individual):
     :param best_individual: The best individual in our population
     :return: Two offspring
     """
+
+    q = [0]
+    for i in range(n):
+        q.append(q[i] + random.randint(1, (J // 3)))
+    q.append(J - 1)
+    q.sort()
+
     bad_cutting_point_sequence = True
     while bad_cutting_point_sequence:
 
-        q = sorted(random.sample(range(0, J), n - 1))
+        q = [0]
+        q.extend(sorted(random.sample(range(1, J), n - 2)))
+        q.append(J)
 
+        if len(q) != n:
+            die("wrong size")
         # hypothesis: cutting point sequence is good
         bad_cutting_point_sequence = False
 
@@ -81,45 +96,38 @@ def best_order(args, J, n, parent1, parent2, best_individual):
 
     # assign a parent for each sequence
     parent_choices = [random.randint(1, 3) for subsequence in range(n - 1)]
+    # print("q: ", q)
+    # print("pc: ", parent_choices)
+
     offspring1 = []
     offspring2 = []
-
-    sp = 0
-    for i in range(len(q)):
-        ep = q[i]
-
-        if parent_choices[i] == 1:
-            alleles1 = parent1[sp:ep]
-            alleles2 = parent2[sp:ep]
-
-        if parent_choices[i] == 2:
-            alleles1 = order_subset_from_full_set(parent1[sp:ep], parent2)
-            alleles2 = order_subset_from_full_set(parent2[sp:ep], parent1)
-
-        if parent_choices[i] == 3:
-            alleles1 = order_subset_from_full_set(parent1[sp:ep], best_individual)
-            alleles2 = order_subset_from_full_set(parent2[sp:ep], best_individual)
-
-        offspring1.extend(alleles1)
-        offspring2.extend(alleles2)
-        sp = ep + 1
-    offspring1.extend
 
     for i in range(len(q) - 1):
         sp = q[i]
         ep = q[i + 1]
 
-        print(sp, ep)
+        # print("i is ", i)
+        if parent_choices[i] == 1:
+            alleles1 = parent1[sp:ep]
+            alleles2 = parent2[sp:ep]
+            # print("pc1: ", parent1[sp:ep], alleles1)
 
-        print("alleles", alleles1, alleles2)
+        if parent_choices[i] == 2:
+            alleles1 = order_subset_from_full_set(parent1[sp:ep], parent2)
+            alleles2 = order_subset_from_full_set(parent2[sp:ep], parent1)
+            # print("pc2: ", parent1[sp:ep], alleles1)
 
-    print("q was ", q)
-    print("best ", best_individual)
-    print("parent choices ", parent_choices)
-    print("lens ", len(offspring1), len(offspring2))
-    print("offspring ", offspring1, offspring2)
+        if parent_choices[i] == 3:
+            alleles1 = order_subset_from_full_set(parent1[sp:ep], best_individual)
+            alleles2 = order_subset_from_full_set(parent2[sp:ep], best_individual)
+            # print("pc3: ", parent1[sp:ep], alleles1)
+
+        offspring1.extend(alleles1)
+        offspring2.extend(alleles2)
+
+    # print("parents: \n\t%s\n\t%s\n\t%s" %(parent1, parent2, best_individual))
+    # print("offspring: \n\t%s\n\t%s " %(offspring1, offspring2))
     return offspring1, offspring2
-
 
 
 def cut_crossfill(args, parent1, parent2):

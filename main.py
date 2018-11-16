@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import os
-import sys
 import time
 
 import src.data_import as data_import
@@ -79,16 +78,17 @@ def parse_args():
 
     args = {
         'datafile': sys.argv[1],
-        'pop_size': 20,
+        'pop_size': 50,
         'initialize_method': 'random',
         'parent_selection': 'random',
-        'recombination': 'best_order',
+        'recombination': 'cut_crossfill',
         'crossover_rate': 0.9,
         'survivor_selection': 'mu_plus_lambda',
         'mutation_rate': 1,
         'generations': 1000,
         'box_cutting_points_n': 5
     }
+    args['recombination'] = 'best_order'
 
     print_banner(args)
     return args
