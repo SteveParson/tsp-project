@@ -8,6 +8,7 @@ import src.evaluate as evaluate
 import src.initialize as initialize
 import src.offspring_generation as offspring_generation
 import src.select as select
+from src.utility import *
 
 
 def main():
@@ -81,11 +82,12 @@ def parse_args():
         'pop_size': 20,
         'initialize_method': 'random',
         'parent_selection': 'random',
-        'recombination': 'cut_crossfill',
+        'recombination': 'best_order',
         'crossover_rate': 0.9,
         'survivor_selection': 'mu_plus_lambda',
         'mutation_rate': 1,
         'generations': 1000,
+        'box_cutting_points_n': 5
     }
 
     print_banner(args)
@@ -105,17 +107,7 @@ def print_banner(arguments):
     print()
 
 
-def die(error):
-    """ Helper function to die on error
 
-    :param error: Error message to display to user
-    :return: Kills the program
-    """
-
-    print("Error: " + error)
-    print("Usage: python3.5 " + str(sys.argv[0]) +
-          " datafile")
-    raise SystemExit
 
 
 # CodeTimer derived from
