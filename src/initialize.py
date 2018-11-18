@@ -21,9 +21,17 @@ def gen_population(args):
         #    pop.append(kmeans(args))
 
         # multi process
-        pool = mp.Pool(processes=6)
+
+        # set this too high and too much ram is used
+        # https://stackoverflow.com/questions/18414020/memory-usage-keep-growing-with-pythons-multiprocessing-pool
+        # problem probably not worth fixing, structural cost is high
+        pool = mp.Pool(processes=3)
+
         results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
         pop = [p.get() for p in results]
+        print(pop)
+        pool.close()
+        pool.join()
 
     args['population'] = pop
 
@@ -106,7 +114,7 @@ def kmeans(args):
         # print()
 
     flattened_array = [knn_cluster_cities[x][y] for x in range(len(knn_cluster_cities)) for y in
-         range(len(knn_cluster_cities[x]))]
+                       range(len(knn_cluster_cities[x]))]
 
     # print(x)
     return flattened_array

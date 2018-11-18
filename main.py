@@ -21,12 +21,12 @@ def main():
         'survivor_selection': 'mu_plus_lambda',
         'mutation_rate': 1,
         'generations': 100,
-        'box_cutting_points_n': 50,
-        'knn_k': 50
+        'box_cutting_points_n': 4663 // 5,
+        'knn_k': 4663 // 5
     }
 
     args['initialize_method'] = 'kmeans'
-    # args['recombination'] = 'best_order'
+    args['recombination'] = 'best_order'
 
     print_banner(args)
 
