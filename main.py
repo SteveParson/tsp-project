@@ -13,20 +13,20 @@ def main():
 
     args = {
         'datafile': sys.argv[1],
-        'pop_size': 200,
+        'pop_size': 20,
         'initialize_method': 'random',
         'parent_selection': 'random',
         'recombination': 'cut_crossfill',
         'crossover_rate': 0.9,
         'survivor_selection': 'mu_plus_lambda',
         'mutation_rate': 1,
-        'generations': 1000,
-        'box_cutting_points_n': 12 // 3,
-        'knn_k': 12 // 3
+        'generations': 100,
+        'box_cutting_points_n': 50,
+        'knn_k': 50
     }
 
     args['initialize_method'] = 'kmeans'
-    args['recombination'] = 'best_order'
+    # args['recombination'] = 'best_order'
 
     print_banner(args)
 
@@ -47,7 +47,6 @@ def main():
         select.survivors(args)
         evaluate.print_stats(args)
 
-    # print fitness of best individuals
     evaluate.print_final(args)
 
 

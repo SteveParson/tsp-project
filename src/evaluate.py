@@ -1,5 +1,3 @@
-import numpy as np
-
 from .utility import *
 
 
@@ -41,10 +39,25 @@ def print_stats(args):
 
 def print_final(args):
     x = rankify(args['fitness'])
+    population = args['population']
+    dataset = args['dataset']
 
     print("The best 5 individuals: ")
-    for i in range(5):
-        print("#%d (fitness: %d)" % (i, args['fitness'][x[i]]))
+    for j in range(5):
+        print("#%d (fitness: %d): %s" % (j, args['fitness'][x[j]], args['population'][x[j]]))
+
+        # UNCOMMENT TO SEE THE BEST 5 GRAPHICALLY
+        # x1, y = [], []
+        # # print fitness of best individuals
+        # for i in range(len(population[x[j]])):
+        #     x1.append(dataset[population[x[j]][i]][0])
+        #     y.append(dataset[population[x[j]][i]][1])
+        #     # add the first city to connect to the last
+        # x1.append(dataset[population[x[j]][0]][0])
+        # y.append(dataset[population[x[j]][0]][1])
+        #
+        # plt.plot(x1, y, '-o')
+        # plt.show()
 
     pass
 
