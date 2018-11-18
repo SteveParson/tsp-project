@@ -13,7 +13,7 @@ def main():
 
     args = {
         'datafile': sys.argv[1],
-        'pop_size': 20,
+        'pop_size': 200,
         'initialize_method': 'random',
         'parent_selection': 'random',
         'recombination': 'cut_crossfill',
@@ -21,8 +21,8 @@ def main():
         'survivor_selection': 'mu_plus_lambda',
         'mutation_rate': 1,
         'generations': 1000,
-        'box_cutting_points_n': 4663 // 3,
-        'knn_k': 4663 // 3
+        'box_cutting_points_n': 12 // 3,
+        'knn_k': 12 // 3
     }
 
     args['initialize_method'] = 'kmeans'
