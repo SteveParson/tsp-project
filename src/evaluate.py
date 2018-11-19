@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from .utility import *
 
 
@@ -22,6 +24,7 @@ def eval_population(args):
             city1 = population[individual_idx][allele_idx]
             city2 = population[individual_idx][allele_idx + 1]
             individual_sum += distance_matrix[city1][city2]
+        individual_sum += distance_matrix[population[individual_idx][0]][population[individual_idx][1]]
 
         fitness.append(-individual_sum)
 
@@ -42,22 +45,22 @@ def print_final(args):
     population = args['population']
     dataset = args['dataset']
 
-    print("The best 5 individuals: ")
-    for j in range(5):
+    print("The best individual: ")
+    for j in range(1):
         print("#%d (fitness: %d): %s" % (j, args['fitness'][x[j]], args['population'][x[j]]))
 
         # UNCOMMENT TO SEE THE BEST 5 GRAPHICALLY
-        # x1, y = [], []
-        # # print fitness of best individuals
-        # for i in range(len(population[x[j]])):
-        #     x1.append(dataset[population[x[j]][i]][0])
-        #     y.append(dataset[population[x[j]][i]][1])
-        #     # add the first city to connect to the last
-        # x1.append(dataset[population[x[j]][0]][0])
-        # y.append(dataset[population[x[j]][0]][1])
-        #
-        # plt.plot(x1, y, '-o')
-        # plt.show()
+        x1, y = [], []
+        # print fitness of best individuals
+        for i in range(len(population[x[j]])):
+            x1.append(dataset[population[x[j]][i]][0])
+            y.append(-dataset[population[x[j]][i]][1])
+            # add the first city to connect to the last
+        x1.append(dataset[population[x[j]][0]][0])
+        y.append(-dataset[population[x[j]][0]][1])
+
+        plt.plot(y, x1, '-o')
+        plt.show()
 
     pass
 

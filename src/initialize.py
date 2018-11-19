@@ -97,6 +97,16 @@ def kmeans(args):
             # print("Distances: ", distances)
             # print("Lowidx %d, low_city %d" % (low_idx, low_city))
 
+        # arrange the clusters centres randomly
+        # TODO: Make this ordered, like a mini tsp problem
+        # new = knn_cluster_centers.copy()
+        np.random.shuffle(knn_cluster_centers)
+        # for center_idx in range(len(knn_cluster_centers)-1):
+        #    for center_idx in range(1, len(knn_cluster_centers)):
+
+
+
+
         # remove the cluster lists
         knn_cluster_cities = [[] for x in range(args['knn_k'])]
 
@@ -105,6 +115,9 @@ def kmeans(args):
             distances = [distance_matrix[x][city] for x in knn_cluster_centers]
             min_d = np.argmin(distances)
             knn_cluster_cities[min_d].append(city)
+
+        # for i in range(len(knn_cluster_cities)):
+        #np.random.shuffle(knn_cluster_cities[i])
 
         # print("Convergence: ", convergence_value)
         # print("criteria ", (last_convergence_val - convergence_value))
