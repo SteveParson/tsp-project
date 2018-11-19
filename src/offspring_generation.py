@@ -171,8 +171,7 @@ def mutation(args):
 
     for i in range(len(offspring)):
         if random.random() < mutation_rate:
-            offspring[i] = insertion_mutation(offspring[i])
-
+            offspring[i] = inversion_swap(offspring[i])
 
 def permutation_swap(individual):
     # copy the individual
@@ -190,11 +189,18 @@ def permutation_swap(individual):
     mutant[point1], mutant[point2] = mutant[point2], mutant[point1]
     return mutant
 
-
 def insertion_mutation(individual):
     z = [random.randint(0, len(individual) - 1) for x in range(2)]
     z.sort()
     mutant = individual[:z[0]] + individual[z[0] + 1:z[1] + 1]
     mutant.append(individual[z[0]])
     mutant.extend(individual[z[1] + 1:])
+    return mutant
+
+def inversion_swap(individual):
+    z = [random.randint(0, len(individual)-1) for x in range(2)]
+    z.sort()
+    seq = individual[z[0]:z[1] + 1]
+    seq.reverse()
+    mutant = individual[:z[0]] + seq + individual[z[1] + 1:]
     return mutant
