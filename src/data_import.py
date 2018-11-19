@@ -32,9 +32,8 @@ def calc_distance_matrix(args):
 
     # load the distance matrix from a file if it exists
     if os.path.isfile(sys.argv[1] + ".distance"):
-        f = open(sys.argv[1] + ".distance", "rb")
-        distance_matrix = pickle.load(f)
-        f.close()
+        with open(sys.argv[1] + ".distance", "rb") as myfile:
+            distance_matrix = pickle.load(myfile)
 
     else:
         all_cities = range(len(dataset))

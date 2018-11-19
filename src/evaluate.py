@@ -24,7 +24,7 @@ def eval_population(args):
             city1 = population[individual_idx][allele_idx]
             city2 = population[individual_idx][allele_idx + 1]
             individual_sum += distance_matrix[city1][city2]
-        individual_sum += distance_matrix[population[individual_idx][0]][population[individual_idx][1]]
+        individual_sum += distance_matrix[population[individual_idx][0]][population[individual_idx][-1]]
 
         fitness.append(-individual_sum)
 

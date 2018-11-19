@@ -100,9 +100,28 @@ def kmeans(args):
         # arrange the clusters centres randomly
         # TODO: Make this ordered, like a mini tsp problem
         # new = knn_cluster_centers.copy()
+
+        # np.random.shuffle(knn_cluster_centers)
+        # aa = []
+        # for i in range(len(knn_cluster_centers)):
+        #     aa.append(knn_cluster_centers[i])
+        #     for j in range(1, len(knn_cluster_centers)):
         np.random.shuffle(knn_cluster_centers)
-        # for center_idx in range(len(knn_cluster_centers)-1):
-        #    for center_idx in range(1, len(knn_cluster_centers)):
+        new_cluster = [knn_cluster_centers[0]]
+        while len(new_cluster) < len(knn_cluster_centers):
+            cluster_centers = []
+            cluster_center_distances = []
+            for i in knn_cluster_centers:
+                if i in new_cluster:
+                    continue
+                cluster_centers.append(i)
+                cluster_center_distances.append(distance_matrix[i][new_cluster[-1]])
+            smallest_cluster_idx = np.argmin(cluster_center_distances)
+            new_cluster.append(cluster_centers[smallest_cluster_idx])
+
+
+
+
 
 
 

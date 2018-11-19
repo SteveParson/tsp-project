@@ -1,4 +1,4 @@
-
+data/*.distance
 .idea/
 misc.xml
 modules.xml
