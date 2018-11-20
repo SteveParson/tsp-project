@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 from src import evaluate, offspring_generation, select
 from src.utility import *
 
@@ -9,8 +8,10 @@ def main():
     """ Entry point of program """
 
     # check command line args
-    check_args()
+    args = {}
 
+    ####################################################
+    # COMMENT THIS SECTION OUT TO LOAD ARGS FROM A FILE
     args = {
         'datafile': sys.argv[1],
         'pop_size': 20,
@@ -22,12 +23,24 @@ def main():
         'mutation_rate': 0.2,
         'generations': 1000,
         'box_cutting_points_n': 40,
-        'knn_k': 40
+        'kca_k': 40
     }
-
-
     args['initialize_method'] = 'kmeans'
     args['recombination'] = 'best_order'
+    ####################################################
+
+    # see if we have an argument file specified
+    args2 = check_args()
+
+    # if so, use it
+    if args2:
+        args = args2
+
+    # otherwise, dump our args to a .json file in the current directory
+    else:
+        args['argfile'] = str(hash(frozenset(args.items()))) + ".json"
+        with open(args['argfile'], "w") as f:
+            json.dump(args, f, indent=1)
 
     print_banner(args)
 

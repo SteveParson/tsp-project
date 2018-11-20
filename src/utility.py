@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import time
@@ -33,11 +34,19 @@ def check_args():
 
     # TODO: parse everything from command line? maybe not necessary
     print("EA-TSP by E Garg, S Parson, T Rahman, J Wagner")
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         die("Wrong number of parameters")
 
-    if not os.path.isfile(sys.argv[1]):
-        die("File '" + str(sys.argv[1]) + "' does not exist.")
+    for i in range(len(sys.argv)):
+        if not os.path.isfile(sys.argv[i]):
+            die("File '" + str(sys.argv[i]) + "' does not exist.")
+
+    if len(sys.argv) > 2:
+        with open(sys.argv[2], "r") as f:
+            args = json.load(f)
+        return args
+
+    return None
 
 
 def print_performance_metrics(args):
@@ -109,7 +118,7 @@ def die(error):
 
     print("Error: " + error)
     print("Usage: python3.5 " + str(sys.argv[0]) +
-          " datafile")
+          " datafile args-file-json")
     raise SystemExit
 
 

@@ -44,19 +44,19 @@ def kmeans(args):
     np.random.seed()
 
     # get cluster centers
-    knn_cluster_centers = np.random.choice(range(chromosome_length), args['knn_k'], replace=False)
+    kca_cluster_centers = np.random.choice(range(chromosome_length), args['kca_k'], replace=False)
 
     # prepare an array of cities that correspond to the centers
-    knn_cluster_cities = [[] for x in range(args['knn_k'])]
+    kca_cluster_cities = [[] for x in range(args['kca_k'])]
 
     # assign every city to a particular cluster
     for city in range(chromosome_length):
-        distances = [distance_matrix[x][city] for x in knn_cluster_centers]
+        distances = [distance_matrix[x][city] for x in kca_cluster_centers]
         min_d = np.argmin(distances)
-        knn_cluster_cities[min_d].append(city)
+        kca_cluster_cities[min_d].append(city)
 
-    # print("KNN Cluster Centers: ", knn_cluster_centers)
-    # print("KNN Cluster Cities: ", knn_cluster_cities)
+    # print("KNN Cluster Centers: ", kca_cluster_centers)
+    # print("KNN Cluster Cities: ", kca_cluster_cities)
 
     # TODO: Need a better convergence model
     iteration = 0
@@ -66,56 +66,56 @@ def kmeans(args):
         iteration += 1
 
         # for every cluster
-        for cluster_idx in range(len(knn_cluster_cities)):
-            # print("KNN Cluster Centers: ", knn_cluster_centers)
-            # print("KNN Cluster Cities: ", knn_cluster_cities)
-            # print("Considering cluster %d: %s" % (cluster_idx, knn_cluster_cities[cluster_idx]))
+        for cluster_idx in range(len(kca_cluster_cities)):
+            # print("KNN Cluster Centers: ", kca_cluster_centers)
+            # print("KNN Cluster Cities: ", kca_cluster_cities)
+            # print("Considering cluster %d: %s" % (cluster_idx, kca_cluster_cities[cluster_idx]))
 
             # if this cluster is empty, skip it
-            if len(knn_cluster_cities[cluster_idx]) == 0:
+            if len(kca_cluster_cities[cluster_idx]) == 0:
                 continue
 
             distances = []
             distance = 0
 
             # find a new center
-            for city_idx in range(len(knn_cluster_cities[cluster_idx])):
-                for city_idx2 in range(len(knn_cluster_cities[cluster_idx])):
+            for city_idx in range(len(kca_cluster_cities[cluster_idx])):
+                for city_idx2 in range(len(kca_cluster_cities[cluster_idx])):
                     if city_idx == city_idx2:
                         continue
-                    distance += distance_matrix[knn_cluster_cities[cluster_idx][city_idx]][
-                        knn_cluster_cities[cluster_idx][city_idx2]]
+                    distance += distance_matrix[kca_cluster_cities[cluster_idx][city_idx]][
+                        kca_cluster_cities[cluster_idx][city_idx2]]
                 distances.append(distance)
             low_idx = np.argmin(distances)
 
             # convergence_value += distances[low_idx]
 
             # assign the new center
-            low_city = knn_cluster_cities[cluster_idx][low_idx]
-            knn_cluster_centers[cluster_idx] = low_city
+            low_city = kca_cluster_cities[cluster_idx][low_idx]
+            kca_cluster_centers[cluster_idx] = low_city
 
             # print("Distances: ", distances)
             # print("Lowidx %d, low_city %d" % (low_idx, low_city))
 
         # arrange the clusters centres randomly
         # TODO: Make this ordered, like a mini tsp problem
-        # new = knn_cluster_centers.copy()
+        # new = kca_cluster_centers.copy()
 
-        # np.random.shuffle(knn_cluster_centers)
+        # np.random.shuffle(kca_cluster_centers)
         # aa = []
-        # for i in range(len(knn_cluster_centers)):
-        #     aa.append(knn_cluster_centers[i])
-        #     for j in range(1, len(knn_cluster_centers)):
+        # for i in range(len(kca_cluster_centers)):
+        #     aa.append(kca_cluster_centers[i])
+        #     for j in range(1, len(kca_cluster_centers)):
 
-        np.random.shuffle(knn_cluster_centers)
+        np.random.shuffle(kca_cluster_centers)
 
-        new_cluster = [knn_cluster_centers[0]]
+        new_cluster = [kca_cluster_centers[0]]
 
-        while len(new_cluster) < len(knn_cluster_centers):
+        while len(new_cluster) < len(kca_cluster_centers):
             cluster_centers = []
             cluster_center_distances = []
 
-            for i in knn_cluster_centers:
+            for i in kca_cluster_centers:
                 if i in new_cluster:
                     continue
 
@@ -125,29 +125,29 @@ def kmeans(args):
             smallest_cluster_idx = np.argmin(cluster_center_distances)
             new_cluster.append(cluster_centers[smallest_cluster_idx])
 
-        knn_cluster_centers = new_cluster
+        kca_cluster_centers = new_cluster
 
         # remove the cluster lists
-        knn_cluster_cities = [[] for x in range(args['knn_k'])]
+        kca_cluster_cities = [[] for x in range(args['kca_k'])]
 
         # reestablish the cluster lists with the new centers
         for city in range(chromosome_length):
-            distances = [distance_matrix[x][city] for x in knn_cluster_centers]
+            distances = [distance_matrix[x][city] for x in kca_cluster_centers]
             min_d = np.argmin(distances)
-            knn_cluster_cities[min_d].append(city)
+            kca_cluster_cities[min_d].append(city)
 
-        # for i in range(len(knn_cluster_cities)):
-        #np.random.shuffle(knn_cluster_cities[i])
+        # for i in range(len(kca_cluster_cities)):
+        # np.random.shuffle(kca_cluster_cities[i])
 
         # print("Convergence: ", convergence_value)
         # print("criteria ", (last_convergence_val - convergence_value))
-        # print("KNN Cluster Centers: ", knn_cluster_centers)
-        # print("KNN Cluster Cities: ", knn_cluster_cities)
+        # print("KNN Cluster Centers: ", kca_cluster_centers)
+        # print("KNN Cluster Cities: ", kca_cluster_cities)
 
         # print()
 
-    flattened_array = [knn_cluster_cities[x][y] for x in range(len(knn_cluster_cities)) for y in
-                       range(len(knn_cluster_cities[x]))]
+    flattened_array = [kca_cluster_cities[x][y] for x in range(len(kca_cluster_cities)) for y in
+                       range(len(kca_cluster_cities[x]))]
 
     # print(x)
     return flattened_array
