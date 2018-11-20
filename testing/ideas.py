@@ -1,5 +1,3 @@
-import multiprocessing as mp
-
 import numpy as np
 
 
@@ -17,21 +15,21 @@ def gen_population(args):
 
     if initialize_method == 'kmeans':
         # single process
-        # for i in range(pop_size):
-        #    pop.append(kmeans(args))
+        for i in range(pop_size):
+            pop.append(kmeans(args))
 
         # multi process
 
         # set this too high and too much ram is used
         # https://stackoverflow.com/questions/18414020/memory-usage-keep-growing-with-pythons-multiprocessing-pool
         # problem probably not worth fixing, structural cost is high
-        pool = mp.Pool(processes=3)
-
-        results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
-        pop = [p.get() for p in results]
-        print(pop)
-        pool.close()
-        pool.join()
+        # pool = mp.Pool(processes=3)
+        #
+        # results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
+        # pop = [p.get() for p in results]
+        # print(pop)
+        # pool.close()
+        # pool.join()
 
     args['population'] = pop
 
@@ -106,26 +104,18 @@ def kmeans(args):
         # for i in range(len(knn_cluster_centers)):
         #     aa.append(knn_cluster_centers[i])
         #     for j in range(1, len(knn_cluster_centers)):
-
         np.random.shuffle(knn_cluster_centers)
-
         new_cluster = [knn_cluster_centers[0]]
-
         while len(new_cluster) < len(knn_cluster_centers):
             cluster_centers = []
             cluster_center_distances = []
-
             for i in knn_cluster_centers:
                 if i in new_cluster:
                     continue
-
                 cluster_centers.append(i)
-                cluster_center_distances.append(distance_matrix[i][new_cluster[len(new_cluster) - 1]])
-
+                cluster_center_distances.append(distance_matrix[i][new_cluster[-1]])
             smallest_cluster_idx = np.argmin(cluster_center_distances)
             new_cluster.append(cluster_centers[smallest_cluster_idx])
-
-        knn_cluster_centers = new_cluster
 
         # remove the cluster lists
         knn_cluster_cities = [[] for x in range(args['knn_k'])]
@@ -137,7 +127,7 @@ def kmeans(args):
             knn_cluster_cities[min_d].append(city)
 
         # for i in range(len(knn_cluster_cities)):
-        #np.random.shuffle(knn_cluster_cities[i])
+        # np.random.shuffle(knn_cluster_cities[i])
 
         # print("Convergence: ", convergence_value)
         # print("criteria ", (last_convergence_val - convergence_value))
@@ -145,9 +135,34 @@ def kmeans(args):
         # print("KNN Cluster Cities: ", knn_cluster_cities)
 
         # print()
+        import matplotlib.pyplot as plt
+
+        dataset = args['dataset']
+        # for i in range(len(knn_cluster_centers)):
+        #     xx = [dataset[knn_cluster_cities[i][x]][0] for x in range(len(knn_cluster_cities[i]))]
+        #     yy = [-dataset[knn_cluster_cities[i][x]][1] for x in range(len(knn_cluster_cities[i]))]
+        #     plt.plot(yy,xx)
+        #     plt.show()
 
     flattened_array = [knn_cluster_cities[x][y] for x in range(len(knn_cluster_cities)) for y in
                        range(len(knn_cluster_cities[x]))]
+
+    xx = [dataset[flattened_array[x]][0] for x in range(len(flattened_array))]
+    yy = [-dataset[flattened_array[x]][1] for x in range(len(flattened_array))]
+
+    # show clusters graphically
+    marker = 1
+    pos = 0
+    for qqq in range(len(knn_cluster_centers)):
+        marker = (marker + 1) % 11
+        plt.scatter(
+            yy[pos:pos + len(knn_cluster_cities[qqq])],
+            xx[pos:pos + len(knn_cluster_cities[qqq])], marker
+        )
+        pos += len(knn_cluster_cities[qqq])
+
+    plt.show()
+    raise SystemExit
 
     # print(x)
     return flattened_array

@@ -21,8 +21,8 @@ def main():
         'survivor_selection': 'mu_plus_lambda',
         'mutation_rate': 1,
         'generations': 1000,
-        'box_cutting_points_n': 734 // 3,
-        'knn_k': 734 // 3
+        'box_cutting_points_n': 734 // 20,
+        'knn_k': 734 // 20
     }
 
     args['initialize_method'] = 'kmeans'

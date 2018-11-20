@@ -171,7 +171,7 @@ def mutation(args):
 
     for i in range(len(offspring)):
         if random.random() < mutation_rate:
-            offspring[i] = permutation_swap(offspring[i])
+            offspring[i] = insertion_mutation(offspring[i])
 
 
 def permutation_swap(individual):
@@ -188,4 +188,13 @@ def permutation_swap(individual):
 
     # swap the elements
     mutant[point1], mutant[point2] = mutant[point2], mutant[point1]
+    return mutant
+
+
+def insertion_mutation(individual):
+    z = [random.randint(0, len(individual) - 1) for x in range(2)]
+    z.sort()
+    mutant = individual[:z[0]] + individual[z[0] + 1:z[1] + 1]
+    mutant.append(individual[z[0]])
+    mutant.extend(individual[z[1] + 1:])
     return mutant
