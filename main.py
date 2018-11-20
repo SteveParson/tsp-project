@@ -28,7 +28,7 @@ def main():
         'kca_iterations': 20
     }
     args['initialize_method'] = 'kmeans'
-    # args['recombination'] = 'best_order'
+    args['recombination'] = 'best_order'
     ####################################################
 
     # see if we have an argument file specified

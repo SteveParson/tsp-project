@@ -15,7 +15,7 @@ def recombination(args):
     if recombination_type == 'cut_crossfill':
         offspring = []
         i = 0
-        while len(offspring) < popsize:
+        while len(offspring) < mp_size:
             parent1 = population[parents[i]]
             parent2 = population[parents[i + 1]]
             if random.random() < crossover_rate:
@@ -25,6 +25,7 @@ def recombination(args):
                 offspring2 = list(population[parents[i + 1]].copy())
             offspring.append(offspring1)
             offspring.append(offspring2)
+            i = (i + 2) % mp_size
 
     if recombination_type == 'best_order':
         best_individual = population[np.argmax(fitness)]
@@ -52,6 +53,7 @@ def recombination(args):
 
             offspring.append(offspring1)
             offspring.append(offspring2)
+            i = (i + 2) % mp_size
 
     args['offspring'] = offspring
     return
