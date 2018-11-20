@@ -35,9 +35,9 @@ def eval_population(args):
 def print_stats(args):
     fitness = args['fitness']
 
-    print("  max, mean, std: %d %d %d" % (
-        np.max(fitness),
-        np.mean(fitness),
+    print("%d %d %d" % (
+        -np.max(fitness),
+        -np.mean(fitness),
         np.std(fitness)))
 
 

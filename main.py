@@ -53,7 +53,7 @@ def main():
 
     # process every generation
     for i in range(args['generations']):
-        print("Generation %d: " % i)
+        print("Generation %d: " % i, end="")
         evaluate.eval_population(args)
         select.parents(args)
         offspring_generation.recombination(args)
