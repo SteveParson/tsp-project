@@ -25,9 +25,10 @@ def main():
         'box_cutting_points_n': 40,
         'kca_k': 0.3,
         "kca_proportion": True,
+        'kca_iterations': 20
     }
     args['initialize_method'] = 'kmeans'
-    args['recombination'] = 'best_order'
+    # args['recombination'] = 'best_order'
     ####################################################
 
     # see if we have an argument file specified
@@ -43,7 +44,7 @@ def main():
         with open(args['argfile'], "w") as f:
             json.dump(args, f, indent=1)
 
-    print_banner(args)
+    #print_banner(args)
 
     # print performance metrics
     print_performance_metrics(args)

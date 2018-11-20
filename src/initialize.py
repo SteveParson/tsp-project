@@ -21,7 +21,6 @@ def gen_population(args):
         #    pop.append(kmeans(args))
 
         # multi process
-
         # set this too high and too much ram is used
         # https://stackoverflow.com/questions/18414020/memory-usage-keep-growing-with-pythons-multiprocessing-pool
         # problem probably not worth fixing, structural cost is high
@@ -63,9 +62,9 @@ def kmeans(args):
 
     # TODO: Need a better convergence model
     iteration = 0
-    while iteration < 20:
-        # print()
-        # print("Iteration ", i)
+    cluster_hash = 0
+    while iteration < args['kca_iterations']:
+        print("Iterations: ", iteration)
         iteration += 1
 
         # for every cluster
@@ -100,15 +99,7 @@ def kmeans(args):
             # print("Distances: ", distances)
             # print("Lowidx %d, low_city %d" % (low_idx, low_city))
 
-        # arrange the clusters centres randomly
-        # TODO: Make this ordered, like a mini tsp problem
-        # new = kca_cluster_centers.copy()
 
-        # np.random.shuffle(kca_cluster_centers)
-        # aa = []
-        # for i in range(len(kca_cluster_centers)):
-        #     aa.append(kca_cluster_centers[i])
-        #     for j in range(1, len(kca_cluster_centers)):
 
         np.random.shuffle(kca_cluster_centers)
 
@@ -148,6 +139,13 @@ def kmeans(args):
         # print("KNN Cluster Cities: ", kca_cluster_cities)
 
         # print()
+
+        ############ CLUSTER CONVERGENCE TESTING
+        # cluster_hash_compare = hash(tuple(kca_cluster_centers))
+        # print(kca_cluster_centers)
+        # if cluster_hash_compare == cluster_hash:
+        #     break
+        # cluster_hash = cluster_hash_compare
 
     flattened_array = [kca_cluster_cities[x][y] for x in range(len(kca_cluster_cities)) for y in
                        range(len(kca_cluster_cities[x]))]

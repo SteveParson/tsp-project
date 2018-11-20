@@ -131,4 +131,4 @@ class CodeTimer:
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.took = (time.perf_counter() - self.start) * 1000.0
-        print("%s: %.2f ms" % (self.name, self.took))
+        # print("%s: %.2f ms" % (self.name, self.took))

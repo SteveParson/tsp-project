@@ -48,7 +48,7 @@ def print_final(args):
 
     print("The best individual: ")
     for j in range(1):
-        print("#%d (fitness: %d): %s" % (j, args['fitness'][x[j]], args['population'][x[j]]))
+        print("#%d (fitness: %d): %s" % (j, -args['fitness'][x[j]], args['population'][x[j]]))
 
         # UNCOMMENT TO SEE THE BEST 5 GRAPHICALLY
         x1, y = [], []
