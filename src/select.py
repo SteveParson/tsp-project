@@ -1,5 +1,7 @@
 from .utility import *
 
+import random
+
 
 def parents(args):
     """ Selects parents to form a mating pool
@@ -21,6 +23,18 @@ def parents(args):
     if args['parent_selection'] == 'random':
         args['mating_pool'] = random_selection(range(pop_size), mp_size, False)
 
+    if args['parent_selection'] == 'tournament_selection':
+        selected_to_mate = []
+        fitness = list(enumerate(args['fitness']))
+
+        current_member = 0
+        while current_member < mp_size:
+            random_individuals = random.sample(fitness, args['tournament_size'])
+            best = max(random_individuals, key=lambda arr: arr[1])
+            selected_to_mate.append(best[0])
+            current_member = current_member + 1
+
+        args['mating_pool'] = selected_to_mate
 
 def survivors(args):
     """ Selects survivors in the population
