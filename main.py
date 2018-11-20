@@ -19,11 +19,12 @@ def main():
         'recombination': 'cut_crossfill',
         'crossover_rate': 0.9,
         'survivor_selection': 'mu_plus_lambda',
-        'mutation_rate': 1,
+        'mutation_rate': 0.2,
         'generations': 1000,
-        'box_cutting_points_n': 734 // 20,
-        'knn_k': 734 // 20
+        'box_cutting_points_n': 40,
+        'knn_k': 40
     }
+
 
     args['initialize_method'] = 'kmeans'
     args['recombination'] = 'best_order'
