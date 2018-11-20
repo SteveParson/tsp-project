@@ -64,7 +64,7 @@ def kmeans(args):
     iteration = 0
     cluster_hash = 0
     while iteration < args['kca_iterations']:
-        print("Iterations: ", iteration)
+        # print("Iterations: ", iteration)
         iteration += 1
 
         # for every cluster
