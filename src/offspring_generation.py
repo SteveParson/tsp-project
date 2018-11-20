@@ -10,11 +10,12 @@ def recombination(args):
     crossover_rate = args['crossover_rate']
     recombination_type = args['recombination']
     fitness = args['fitness']
+    popsize = args['pop_size']
 
     if recombination_type == 'cut_crossfill':
         offspring = []
         i = 0
-        while len(offspring) < mp_size:
+        while len(offspring) < popsize:
             parent1 = population[parents[i]]
             parent2 = population[parents[i + 1]]
             if random.random() < crossover_rate:

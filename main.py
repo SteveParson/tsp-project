@@ -44,7 +44,7 @@ def main():
         with open(args['argfile'], "w") as f:
             json.dump(args, f, indent=1)
 
-    #print_banner(args)
+    print_banner(args)
 
     # print performance metrics
     print_performance_metrics(args)

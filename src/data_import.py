@@ -1,7 +1,6 @@
 import math
 import os.path
 import pickle
-import sys
 
 
 def parse_datafile(args):
@@ -31,8 +30,8 @@ def calc_distance_matrix(args):
     dataset = args['dataset']
 
     # load the distance matrix from a file if it exists
-    if os.path.isfile(sys.argv[1] + ".distance"):
-        with open(sys.argv[1] + ".distance", "rb") as myfile:
+    if os.path.isfile(args['datafile'] + ".distance"):
+        with open(args['datafile'] + ".distance", "rb") as myfile:
             distance_matrix = pickle.load(myfile)
 
     else:
@@ -45,7 +44,7 @@ def calc_distance_matrix(args):
                         dataset[city1][1] - dataset[city2][1]) ** 2)
 
         # write the distance matrix to a file
-        f = open(sys.argv[1] + ".distance", "wb")
+        f = open(args['datafile'] + ".distance", "wb")
         pickle.dump(distance_matrix, f)
         f.close()
 
