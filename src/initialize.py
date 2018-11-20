@@ -26,10 +26,8 @@ def gen_population(args):
         # https://stackoverflow.com/questions/18414020/memory-usage-keep-growing-with-pythons-multiprocessing-pool
         # problem probably not worth fixing, structural cost is high
         pool = mp.Pool(processes=3)
-
         results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
         pop = [p.get() for p in results]
-        print(pop)
         pool.close()
         pool.join()
 
@@ -43,11 +41,16 @@ def kmeans(args):
     # because of multiprocessing, reseed
     np.random.seed()
 
+    # get the number of clusters
+    kca_k = args['kca_k']
+    if args['kca_proportion'] == True:
+        kca_k = int(kca_k * chromosome_length)
+
     # get cluster centers
-    kca_cluster_centers = np.random.choice(range(chromosome_length), args['kca_k'], replace=False)
+    kca_cluster_centers = np.random.choice(range(chromosome_length), kca_k, replace=False)
 
     # prepare an array of cities that correspond to the centers
-    kca_cluster_cities = [[] for x in range(args['kca_k'])]
+    kca_cluster_cities = [[] for x in range(kca_k)]
 
     # assign every city to a particular cluster
     for city in range(chromosome_length):
@@ -60,7 +63,7 @@ def kmeans(args):
 
     # TODO: Need a better convergence model
     iteration = 0
-    while iteration < 10:
+    while iteration < 20:
         # print()
         # print("Iteration ", i)
         iteration += 1
@@ -128,7 +131,7 @@ def kmeans(args):
         kca_cluster_centers = new_cluster
 
         # remove the cluster lists
-        kca_cluster_cities = [[] for x in range(args['kca_k'])]
+        kca_cluster_cities = [[] for x in range(kca_k)]
 
         # reestablish the cluster lists with the new centers
         for city in range(chromosome_length):

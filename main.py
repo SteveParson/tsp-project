@@ -23,7 +23,8 @@ def main():
         'mutation_rate': 0.2,
         'generations': 1000,
         'box_cutting_points_n': 40,
-        'kca_k': 40
+        'kca_k': 0.3,
+        "kca_proportion": True,
     }
     args['initialize_method'] = 'kmeans'
     args['recombination'] = 'best_order'
