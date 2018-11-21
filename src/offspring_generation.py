@@ -201,7 +201,14 @@ def insertion_mutation(individual):
     return mutant
 
 def inversion_swap(individual):
-    z = [random.randint(0, len(individual)-1) for x in range(2)]
+    length = int(1 / 0.3 * 2)
+    z = [random.randint(0, len(individual)-1)]
+
+    if z[0] + length >= len(individual):
+        z.append(z[0] - length)
+    else:
+        z.append(z[0] + length)
+
     z.sort()
     seq = individual[z[0]:z[1] + 1]
     seq.reverse()

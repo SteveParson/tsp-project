@@ -31,6 +31,7 @@ def gen_population(args):
         pool.join()
 
     args['population'] = pop
+    args['memoized_fitness'] = {}
 
 
 def kmeans(args):

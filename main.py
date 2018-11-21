@@ -21,7 +21,7 @@ def main():
         'crossover_rate': 0.9,
         'survivor_selection': 'mu_plus_lambda',
         'mutation_rate': 0.2,
-        'generations': 1000,
+        'generations': 5000,
         'box_cutting_points_n': 40,
         'kca_k': 0.3,
         "kca_proportion": True,

@@ -1,5 +1,6 @@
 
 import matplotlib.pyplot as plt
+import random
 
 from .utility import *
 
@@ -26,6 +27,12 @@ def eval_population(args):
             city2 = population[individual_idx][allele_idx + 1]
             individual_sum += distance_matrix[city1][city2]
         individual_sum += distance_matrix[population[individual_idx][0]][population[individual_idx][-1]]
+        x = str(int(individual_sum))
+
+        if args['memoized_fitness'].get(x) is None:
+            args['memoized_fitness'][x] = True
+        else:
+            individual_sum = individual_sum + random.uniform(0.0, 0.02) * individual_sum
 
         fitness.append(-individual_sum)
 
