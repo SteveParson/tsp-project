@@ -1,58 +1,24 @@
 #!/usr/bin/env python3
 
-from src import evaluate, offspring_generation, select
+from src import initialize, evaluate, offspring_generation, select, data_import
 from src.utility import *
 
 
 def main():
-    """ Entry point of program """
+    args = check_args()
 
-    # check command line args
-    args = {}
-
-    ####################################################
-    # COMMENT THIS SECTION OUT TO LOAD ARGS FROM A FILE
-    args = {
-        'datafile': sys.argv[1],
-        'pop_size': 20,
-        'initialize_method': 'random',
-        'parent_selection': 'random',
-        'recombination': 'cut_crossfill',
-        'crossover_rate': 0.9,
-        'survivor_selection': 'mu_plus_lambda',
-        'mutation_rate': 0.2,
-        'generations': 5000,
-        'box_cutting_points_n': 40,
-        'kca_k': 0.3,
-        "kca_proportion": True,
-        'kca_iterations': 20
-    }
-    args['initialize_method'] = 'kmeans'
-    args['recombination'] = 'best_order'
-    ####################################################
-
-    # see if we have an argument file specified
-    args2 = check_args()
-
-    # if so, use it
-    if args2:
-        args = args2
-
-    # otherwise, dump our args to a .json file in the current directory
-    else:
-        args['argfile'] = str(hash(frozenset(args.items()))) + ".json"
-        with open(args['argfile'], "w") as f:
-            json.dump(args, f, indent=1)
+    print("EA-TSP by E Garg, S Parson, T Rahman, J Wagner")
 
     print_banner(args)
 
-    # print performance metrics
-    print_performance_metrics(args)
+    if args['performance_debug']:
+        print_performance_metrics(args)
+        evaluate.print_stats(args)
 
-    # print population stats
-    evaluate.print_stats(args)
+    data_import.parse_datafile(args)
+    data_import.calc_distance_matrix(args)
+    initialize.gen_population(args)
 
-    # process every generation
     for i in range(args['generations']):
         print("Generation %d: " % i, end="")
         evaluate.eval_population(args)
@@ -66,6 +32,5 @@ def main():
     evaluate.print_final(args)
 
 
-# run main
 if __name__ == "__main__":
     main()

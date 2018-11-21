@@ -27,27 +27,23 @@ def order_subset_from_full_set(subset, full_set):
 
 
 def check_args():
-    """ Read the command line and generate an object that encompasses all parameters
-
-    :return: A dictionary that is used as a global dictionary between functions
+    """
+    This function gets the required arguments for the EA from a JSON
+    file and returns it as a dictionary.
     """
 
-    # TODO: parse everything from command line? maybe not necessary
-    print("EA-TSP by E Garg, S Parson, T Rahman, J Wagner")
-    if len(sys.argv) < 2:
-        die("Wrong number of parameters")
+    if len(sys.argv) == 2:
+        if not os.path.isfile(sys.argv[1]):
+            die("File '" + str(sys.argv[1]) + "' does not exist.")
 
-    for i in range(len(sys.argv)):
-        if not os.path.isfile(sys.argv[i]):
-            die("File '" + str(sys.argv[i]) + "' does not exist.")
-
-    if len(sys.argv) > 2:
-        with open(sys.argv[2], "r") as f:
+        with open(sys.argv[2], 'r') as f:
             args = json.load(f)
-        return args
+    else:
+        print("No argument file specified, using default...")
+        with open('default_args.json', 'r') as f:
+            args = json.load(f)
 
-    return None
-
+    return args
 
 def print_performance_metrics(args):
     # read the data file
