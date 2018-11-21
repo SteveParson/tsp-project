@@ -4,6 +4,11 @@ import numpy as np
 
 
 def gen_population(args):
+    """
+    Generate the initial population.
+
+    :param args: The global parameter dictionary.
+    """
     chromosome_length = len(args['dataset'])
     distance_matrix = args['distance_matrix']
     pop_size = args['pop_size']
@@ -16,14 +21,9 @@ def gen_population(args):
             pop.append(np.random.permutation(chromosome_range))
 
     if initialize_method == 'kmeans':
-        # single process
-        # for i in range(pop_size):
-        #    pop.append(kmeans(args))
-
-        # multi process
+        # Multi-processing
         # set this too high and too much ram is used
         # https://stackoverflow.com/questions/18414020/memory-usage-keep-growing-with-pythons-multiprocessing-pool
-        # problem probably not worth fixing, structural cost is high
         pool = mp.Pool(processes=3)
         results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
         pop = [p.get() for p in results]
@@ -33,123 +33,118 @@ def gen_population(args):
     args['population'] = pop
     args['memoized_fitness'] = {}
 
-
 def kmeans(args):
+    """
+    Initialize the population using the k-means algorithm.
+
+    :param args: The global parameter dictionary.
+    """
     chromosome_length = len(args['dataset'])
     distance_matrix = args['distance_matrix']
 
-    # because of multiprocessing, reseed
+    # Becuse of multiprocessing, reseed
     np.random.seed()
 
-    # get the number of clusters
+    # Get the number of clusters
     kca_k = args['kca_k']
+    # kca_k can also be a proportion of the chromosome length
     if args['kca_proportion'] == True:
         kca_k = int(kca_k * chromosome_length)
 
-    # get cluster centers
+    # Calculate cluster centers
     kca_cluster_centers = np.random.choice(range(chromosome_length), kca_k, replace=False)
 
-    # prepare an array of cities that correspond to the centers
+    # Initialize an empty array of cities that correspond
+    # to the centers
     kca_cluster_cities = [[] for x in range(kca_k)]
 
-    # assign every city to a particular cluster
+    # Assign every city to a particular cluster
     for city in range(chromosome_length):
+        # Calculate the distance between a given city and every cluster
+        # center
         distances = [distance_matrix[x][city] for x in kca_cluster_centers]
+        # Pick the cluster that is closest to the given city
         min_d = np.argmin(distances)
+        # Then, add the city to that closest cluster
         kca_cluster_cities[min_d].append(city)
 
-    # print("KNN Cluster Centers: ", kca_cluster_centers)
-    # print("KNN Cluster Cities: ", kca_cluster_cities)
 
-    # TODO: Need a better convergence model
     iteration = 0
     cluster_hash = 0
+
+    # kca_iterations defines for how many iterations the cluster centers
+    # are refined. Usually, one would use a convergence a model to find an
+    # appropriate stopping condition, but that turned out to be too
+    # computationally expensive in our case.
     while iteration < args['kca_iterations']:
-        # print("Iterations: ", iteration)
         iteration += 1
 
-        # for every cluster
+        # For every cluster
         for cluster_idx in range(len(kca_cluster_cities)):
-            # print("KNN Cluster Centers: ", kca_cluster_centers)
-            # print("KNN Cluster Cities: ", kca_cluster_cities)
-            # print("Considering cluster %d: %s" % (cluster_idx, kca_cluster_cities[cluster_idx]))
-
-            # if this cluster is empty, skip it
+            # If the cluster is empty, skip it
             if len(kca_cluster_cities[cluster_idx]) == 0:
                 continue
 
             distances = []
             distance = 0
 
-            # find a new center
+            # Find a new center for the given cluster if a better one exists
+            # For every city city1 in the cluster, we add all the distances between
+            # city1 and every other city and append it to the 'distances' list.
             for city_idx in range(len(kca_cluster_cities[cluster_idx])):
                 for city_idx2 in range(len(kca_cluster_cities[cluster_idx])):
                     if city_idx == city_idx2:
                         continue
-                    distance += distance_matrix[kca_cluster_cities[cluster_idx][city_idx]][
-                        kca_cluster_cities[cluster_idx][city_idx2]]
+                    city1 = kca_cluster_cities[cluster_idx][city_idx]
+                    city2 = kca_cluster_cities[cluster_idx][city_idx2]
+                    distance += distance_matrix[city1][city2]
                 distances.append(distance)
+
+            # Pick the city with the smallest cumulative distance
+            # every other city and make it the new center of the current
+            # cluster.
             low_idx = np.argmin(distances)
-
-            # convergence_value += distances[low_idx]
-
-            # assign the new center
             low_city = kca_cluster_cities[cluster_idx][low_idx]
             kca_cluster_centers[cluster_idx] = low_city
 
-            # print("Distances: ", distances)
-            # print("Lowidx %d, low_city %d" % (low_idx, low_city))
+        # TODO: np.random.shuffle(kca_cluster_centers)
 
-
-
-        np.random.shuffle(kca_cluster_centers)
-
+        # Order all the clusters by their centers, so that the closest
+        # clusters stay close to each other.
         new_cluster = [kca_cluster_centers[0]]
 
         while len(new_cluster) < len(kca_cluster_centers):
             cluster_centers = []
             cluster_center_distances = []
 
+            # For the right-most element of the new_cluster list
+            # let's call it 'nc', calculate the distance
+            # between nc and every other cluster center.
             for i in kca_cluster_centers:
                 if i in new_cluster:
                     continue
 
                 cluster_centers.append(i)
-                cluster_center_distances.append(distance_matrix[i][new_cluster[len(new_cluster) - 1]])
+                cluster_center_distances.append(distance_matrix[i][new_cluster[-1]])
 
+            # Pick the cluster that is closest to nc.
             smallest_cluster_idx = np.argmin(cluster_center_distances)
+            # And append it to new_clusters.
             new_cluster.append(cluster_centers[smallest_cluster_idx])
 
         kca_cluster_centers = new_cluster
 
-        # remove the cluster lists
+        # We need to re-assign cities to particular clusters again,
+        # now that we've moved the centers around
         kca_cluster_cities = [[] for x in range(kca_k)]
 
-        # reestablish the cluster lists with the new centers
         for city in range(chromosome_length):
             distances = [distance_matrix[x][city] for x in kca_cluster_centers]
             min_d = np.argmin(distances)
             kca_cluster_cities[min_d].append(city)
 
-        # for i in range(len(kca_cluster_cities)):
-        # np.random.shuffle(kca_cluster_cities[i])
+    # Convert the clustered 2-D chromosome to a 1-D sequence
+    flattened_array = [kca_cluster_cities[x][y] for x in range(len(kca_cluster_cities)) \
+                       for y in range(len(kca_cluster_cities[x]))]
 
-        # print("Convergence: ", convergence_value)
-        # print("criteria ", (last_convergence_val - convergence_value))
-        # print("KNN Cluster Centers: ", kca_cluster_centers)
-        # print("KNN Cluster Cities: ", kca_cluster_cities)
-
-        # print()
-
-        ############ CLUSTER CONVERGENCE TESTING
-        # cluster_hash_compare = hash(tuple(kca_cluster_centers))
-        # print(kca_cluster_centers)
-        # if cluster_hash_compare == cluster_hash:
-        #     break
-        # cluster_hash = cluster_hash_compare
-
-    flattened_array = [kca_cluster_cities[x][y] for x in range(len(kca_cluster_cities)) for y in
-                       range(len(kca_cluster_cities[x]))]
-
-    # print(x)
     return flattened_array
