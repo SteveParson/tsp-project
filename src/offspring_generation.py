@@ -176,7 +176,14 @@ def mutation(args):
         if random.random() < mutation_rate:
             offspring[i] = inversion_swap(offspring[i])
 
+
 def permutation_swap(individual):
+    """
+    Swaps two alleles randomly in a chromosome.
+
+    :param individual: The chromosome
+    :return: A mutated copy of the chromosome
+    """
     # copy the individual
     mutant = individual.copy()
 
@@ -192,25 +199,62 @@ def permutation_swap(individual):
     mutant[point1], mutant[point2] = mutant[point2], mutant[point1]
     return mutant
 
+
 def insertion_mutation(individual):
-    z = [random.randint(0, len(individual) - 1) for x in range(2)]
-    z.sort()
-    mutant = individual[:z[0]] + individual[z[0] + 1:z[1] + 1]
-    mutant.append(individual[z[0]])
-    mutant.extend(individual[z[1] + 1:])
+    """
+    Inserts a random allele adjacent to another random allele
+    in a given chromosome
+
+    :param individual: The chromosome to mutate
+    :return: A mutated copy of the chromosome
+    """
+    positions = sorted([random.randint(0, len(individual) - 1) for x in range(2)])
+    mutant = individual[:positions[0]] + individual[positions[0] + 1:positions[1] + 1]
+    mutant.append(individual[positions[0]])
+    mutant.extend(individual[positions[1] + 1:])
     return mutant
 
-def inversion_swap(individual):
-    length = int(1 / 0.3 * 2)
-    z = [random.randint(0, len(individual)-1)]
 
-    if z[0] + length >= len(individual):
-        z.append(z[0] - length)
+def inversion_swap(individual, length=-1):
+    """
+    Inverts a random subset of alleles in a given chromosome
+
+    :param individual: The chromosome
+    :param length: The size of the inversion
+    :return: A mutated copy of the chromosome.
+    """
+
+    # length = int(1 / 0.3 * 2)
+    # arg should be supplied
+    # ideally   1 / kca_k * 2
+    positions = [random.randint(0, len(individual) - 1)]
+
+    if positions[0] + length >= len(individual):
+        positions.append(positions[0] - length)
     else:
-        z.append(z[0] + length)
+        positions.append(positions[0] + length)
 
-    z.sort()
-    seq = individual[z[0]:z[1] + 1]
+    positions.sort()
+    seq = individual[positions[0]:positions[1] + 1]
     seq.reverse()
-    mutant = individual[:z[0]] + seq + individual[z[1] + 1:]
-    return mutant
+    return individual[:positions[0]] + seq + individual[positions[1] + 1:]
+
+
+def scramble(individual):
+    """
+    Scrambles a random subset of alleles in a given chromosome.
+
+    :param individual: The chromosome
+    :return: A mutated copy of the chromosome.
+    """
+    # get a start and end point for the scramble
+    positions = sorted([random.randint(0, len(individual)) for x in range(2)])
+
+    # get the subset of the original individual that corresponds to the points
+    subset = individual[positions[0]:positions[1]]
+
+    # shuffle the points
+    random.shuffle(subset)
+
+    # return the mutant
+    return individual[:positions[0]] + subset + individual[positions[1]:]
