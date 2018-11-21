@@ -9,7 +9,7 @@ def main():
 
     print("EA-TSP by E Garg, S Parson, T Rahman, J Wagner")
 
-    print_banner(args)
+    print_config(args)
 
     if args['performance_debug']:
         print_performance_metrics(args)

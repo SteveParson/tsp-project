@@ -6,12 +6,9 @@ import time
 import numpy as np
 
 
-# CodeTimer derived from
-# https://stackoverflow.com/questions/14452145/how-to-measure-time-taken-between-lines-of-code-in-python
-# used to time each block, for profiling purposes
-
 def order_subset_from_full_set(subset, full_set):
-    """ Arranges a subset in an order defined by another set
+    """
+    Arranges a subset in an order defined by another set
 
     :param subset: A list containing the elements we wish to order
     :param full_set: A superset of subset, from which we wish to extract order information
@@ -25,11 +22,12 @@ def order_subset_from_full_set(subset, full_set):
 
     return new_order
 
-
 def check_args():
     """
     This function gets the required arguments for the EA from a JSON
     file and returns it as a dictionary.
+
+    :return: EA args as a dictionary.
     """
 
     if len(sys.argv) == 2:
@@ -46,21 +44,22 @@ def check_args():
     return args
 
 def print_performance_metrics(args):
-    # read the data file
+    """
+    Prints performance metrics for various parts of the EA.
+
+    :param args: A dictionary with the EA parameters, what check_args() returns.
+    """
     with CodeTimer('read datafile'):
         from src import data_import
         data_import.parse_datafile(args)
 
-    # calculate the distance matrix
     with CodeTimer('calculate distance matrix'):
         data_import.calc_distance_matrix(args)
 
-    # generate a starter population
     with CodeTimer('generate starter population'):
         from src import initialize
         initialize.gen_population(args)
 
-    # give an idea of evaluation function performance
     with CodeTimer('initial eval time'):
         from src import evaluate
         evaluate.eval_population(args)
@@ -82,11 +81,11 @@ def print_performance_metrics(args):
     with CodeTimer('survivor selection'):
         select.survivors(args)
 
+def print_config(args):
+    """
+    Output the relevant config parameters of the EA.
 
-def print_banner(args):
-    """ Output some details about this program
-
-    :param args: The global parameter dictionary
+    :param args: The global parameter dictionary, as returned by check_args().
     :return:
     """
 
@@ -95,18 +94,18 @@ def print_banner(args):
         print("\t'%s': %s" % (str(k), str(v)))
     print()
 
-
 def rankify(values):
-    """ Rank an array
+    """
+    Rank an array
 
     :param values: An array of values
     :return: A ranking for the array of values
     """
-    return list(np.argsort(np.array(values)))[::-1]
-
+    return np.argsort(np.array(values))[::-1]
 
 def die(error):
-    """ Helper function to die on error
+    """
+    Helper function to die on error
 
     :param error: Error message to display to user
     :return: Kills the program
@@ -114,10 +113,12 @@ def die(error):
 
     print("Error: " + error)
     print("Usage: python3.5 " + str(sys.argv[0]) +
-          " datafile args-file-json")
+          " args-file-json (optional)")
     raise SystemExit
 
-
+# CodeTimer derived from
+# https://stackoverflow.com/questions/14452145/how-to-measure-time-taken-between-lines-of-code-in-python
+# used to time each block, for profiling purposes
 class CodeTimer:
     def __init__(self, name=None):
         self.name = "'" + name + "'" if name else ''
