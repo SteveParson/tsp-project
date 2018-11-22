@@ -30,11 +30,11 @@ def eval_population(args):
         x = str(int(individual_sum))
 
         if args['memoized_fitness'].get(x) is None:
-            args['memoized_fitness'][x] = True
+            args['memoized_fitness'][x] = int(x)
         else:
-            individual_sum = individual_sum + random.uniform(0.0, 0.02) * individual_sum
+            args['memoized_fitness'][x] += 1
 
-        fitness.append(-individual_sum)
+        fitness.append(-args['memoized_fitness'][x])
 
     args['fitness'] = fitness
 
