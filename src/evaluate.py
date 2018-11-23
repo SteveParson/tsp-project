@@ -1,6 +1,5 @@
 
 import matplotlib.pyplot as plt
-import random
 
 from .utility import *
 
@@ -41,12 +40,14 @@ def eval_population(args):
 
 def print_stats(args):
     fitness = args['fitness']
+    args['max'] = -np.max(fitness)
+    args['mean'] = -np.mean(fitness)
+    args['sd'] = np.std(fitness)
+    print("%d %d %d" % (args['max'], args['mean'], args['sd']))
 
-    print("%d %d %d" % (
-        -np.max(fitness),
-        -np.mean(fitness),
-        np.std(fitness)))
 
+def plot(args):
+    args['plotter'].plot()
 
 def print_final(args):
     x = rankify(args['fitness'])

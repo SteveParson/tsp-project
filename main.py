@@ -18,6 +18,7 @@ def main():
     data_import.parse_datafile(args)
     data_import.calc_distance_matrix(args)
     initialize.gen_population(args)
+    initialize.create_plotter(args)
 
     for i in range(args['generations']):
         print("Generation %d: " % i, end="")
@@ -28,6 +29,7 @@ def main():
         evaluate.eval_offspring(args)
         select.survivors(args)
         evaluate.print_stats(args)
+        evaluate.plot(args)
 
     evaluate.print_final(args)
 

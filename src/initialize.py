@@ -1,6 +1,10 @@
 import multiprocessing as mp
+import time
 
+import matplotlib.pyplot as plt
 import numpy as np
+
+from src.plotter import PlotHelper
 
 
 def gen_population(args):
@@ -33,6 +37,7 @@ def gen_population(args):
     args['population'] = pop
     args['memoized_fitness'] = {}
 
+
 def kmeans(args):
     """
     Initialize the population using the k-means algorithm.
@@ -48,7 +53,7 @@ def kmeans(args):
     # Get the number of clusters
     kca_k = args['kca_k']
     # kca_k can also be a proportion of the chromosome length
-    if args['kca_proportion'] == True:
+    if args['kca_proportion']:
         kca_k = int(kca_k * chromosome_length)
 
     # Calculate cluster centers
@@ -68,9 +73,7 @@ def kmeans(args):
         # Then, add the city to that closest cluster
         kca_cluster_cities[min_d].append(city)
 
-
     iteration = 0
-    cluster_hash = 0
 
     # kca_iterations defines for how many iterations the cluster centers
     # are refined. Usually, one would use a convergence a model to find an
@@ -107,7 +110,7 @@ def kmeans(args):
             low_city = kca_cluster_cities[cluster_idx][low_idx]
             kca_cluster_centers[cluster_idx] = low_city
 
-        # TODO: np.random.shuffle(kca_cluster_centers)
+        # TODO: Try convex hull algorithm for this
 
         # Order all the clusters by their centers, so that the closest
         # clusters stay close to each other.
@@ -148,3 +151,15 @@ def kmeans(args):
                        for y in range(len(kca_cluster_cities[x]))]
 
     return flattened_array
+
+
+def create_plotter(args):
+    """ Create plotter object for realtime plotting"""
+
+    # If we're on MacOSX, praise Steve Jobs first
+    if plt.get_backend() == "MacOSX":
+        mp.set_start_method("forkserver")
+
+    # Store the current time, and the plotter object in the global object
+    args['plotter'] = PlotHelper(args)
+    args['time'] = time.time()
