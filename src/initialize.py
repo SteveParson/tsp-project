@@ -156,10 +156,6 @@ def kmeans(args):
 def create_plotter(args):
     """ Create plotter object for realtime plotting"""
 
-    # If we're on MacOSX, praise Steve Jobs first
-    if plt.get_backend() == "MacOSX":
-        mp.set_start_method("forkserver")
-
     # Store the current time, and the plotter object in the global object
     args['plotter'] = PlotHelper(args)
     args['time'] = time.time()

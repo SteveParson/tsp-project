@@ -2,6 +2,10 @@
 
 from src import initialize, evaluate, offspring_generation, select, data_import
 from src.utility import *
+import multiprocessing as mp
+import matplotlib.pyplot as plt
+
+
 
 
 def main():
@@ -34,6 +38,8 @@ def main():
 
     evaluate.print_final(args)
 
-
 if __name__ == "__main__":
+    # If we're on MacOSX, praise Steve Jobs first
+    if plt.get_backend() == "MacOSX":
+        mp.set_start_method("forkserver")
     main()
