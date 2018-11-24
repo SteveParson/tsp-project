@@ -51,28 +51,9 @@ def plot(args):
 
 def print_final(args):
     x = rankify(args['fitness'])
-    population = args['population']
-    dataset = args['dataset']
-
     print("The best individual: ")
-    for j in range(1):
-        print("#%d (fitness: %d): %s" % (j, -args['fitness'][x[j]], args['population'][x[j]]))
-
-        # UNCOMMENT TO SEE THE BEST 5 GRAPHICALLY
-        x1, y = [], []
-        # print fitness of best individuals
-        for i in range(len(population[x[j]])):
-            x1.append(dataset[population[x[j]][i]][0])
-            y.append(-dataset[population[x[j]][i]][1])
-            # add the first city to connect to the last
-        x1.append(dataset[population[x[j]][0]][0])
-        y.append(-dataset[population[x[j]][0]][1])
-
-        plt.plot(y, x1, '-o')
-        plt.show()
-
-    pass
-
+    print("#%d (fitness: %d): %s" % (0, -args['fitness'][x[0]], args['population'][x[0]]))
+    input()
 
 def eval_offspring(args):
     """ Evaluates a population's fitness
