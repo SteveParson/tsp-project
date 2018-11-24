@@ -2,6 +2,7 @@ import multiprocessing as mp
 import time
 
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 
 # adapted from https://matplotlib.org/gallery/misc/multiprocess_sgskip.html
@@ -33,7 +34,8 @@ class PlotHelper(object):
         if finished:
             send(None)
         else:
-            data = (self.args['time'], self.args['max'], self.args['mean'])
+            data = (self.args['time'], self.args['max'],
+                    self.args['mean'], self.args['sd'])
             send(data)
 
 
@@ -69,8 +71,15 @@ class RealPlotter(object):
                 elapsed_time = time.time() - the_box[0]
 
                 # Add the elements to the plot
-                self.ax.plot(elapsed_time, the_box[1], '.r-')
-                self.ax.plot(elapsed_time, the_box[2], 'xb-')
+                self.ax1.plot(elapsed_time, the_box[1], c='tab:orange',
+                              marker=r'$\clubsuit$', alpha=0.5,
+                              markersize=10)
+                self.ax1.plot(elapsed_time, the_box[2], c='tab:blue',
+                              marker=r'$\clubsuit$',  alpha=0.5,
+                              markersize=10)
+                self.ax2.plot(elapsed_time, the_box[3], c='tab:pink',
+                              marker=r'$\clubsuit$', alpha=0.5,
+                              markersize=10)
 
         # Redraw the canvas
         self.fig.canvas.draw()
@@ -79,8 +88,17 @@ class RealPlotter(object):
     def __call__(self, pipe):
         """ Support method for callback """
         self.pipe = pipe
-        self.fig, self.ax = plt.subplots()
-        timer = self.fig.canvas.new_timer(interval=10)
+        self.fig, (self.ax1, self.ax2) = plt.subplots(2, 1)
+        self.ax1.set_xlabel("Time")
+        self.ax1.set_ylabel("Fitness")
+        self.ax2.set_xlabel("Time")
+        self.ax2.set_ylabel("Standard deviation")
+        orange_patch = mpatches.Patch(color='tab:orange', label='Best fitness')
+        blue_patch = mpatches.Patch(color='tab:blue', label='Mean fitness')
+        pink_patch = mpatches.Patch(color='tab:pink', label='Std. dev.')
+        self.ax1.legend(handles=[orange_patch, blue_patch])
+        self.ax2.legend(handles=[pink_patch])
+        timer = self.fig.canvas.new_timer(interval=5)
         timer.add_callback(self.call_back)
         timer.start()
         plt.show()
