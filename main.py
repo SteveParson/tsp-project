@@ -21,6 +21,7 @@ def main():
     initialize.create_plotter(args)
 
     for i in range(args['generations']):
+        args['current_gen'] = i
         print("Generation %d: " % i, end="")
         evaluate.eval_population(args)
         select.parents(args)
