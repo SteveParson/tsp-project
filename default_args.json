@@ -8,11 +8,11 @@
     "recombination": "best_order",
     "crossover_rate": 0.9,
     "survivor_selection": "mu_plus_lambda",
-    "mutation_rate": 0.2,
+    "mutation_rate": 0.8,
     "generations": 1000,
-    "box_cutting_points_n": 40,
-    "kca_k": 0.3,
+    "box_cutting_points_n": 240,
+    "kca_k": 0.4,
     "kca_proportion": true,
-    "kca_iterations": 20,
+    "kca_iterations": 10,
     "performance_debug": false
 }

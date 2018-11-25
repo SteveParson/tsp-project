@@ -30,8 +30,8 @@ def eval_population(args):
 
         if args['memoized_fitness'].get(x) is None:
             args['memoized_fitness'][x] = int(x)
-        else:
-            args['memoized_fitness'][x] += 1
+        #else:
+            #args['memoized_fitness'][x] += 1
 
         fitness.append(-args['memoized_fitness'][x])
 

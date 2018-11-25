@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 def main():
     args = check_args()
     # swap length is relative to the number of clusters
-    args['swap_length'] = int(1 / args['kca_k'] * 3)
+    args['swap_length'] = 3
 
     print(args['swap_length'])
 
