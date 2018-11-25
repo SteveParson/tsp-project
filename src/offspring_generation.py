@@ -174,7 +174,7 @@ def mutation(args):
 
     for i in range(len(offspring)):
         if random.random() < mutation_rate:
-            offspring[i] = inversion_swap(offspring[i])
+            offspring[i] = inversion_swap(offspring[i], length=args['swap_length'])
 
 
 def permutation_swap(individual):
@@ -200,15 +200,16 @@ def permutation_swap(individual):
     return mutant
 
 
-def insertion_mutation(individual):
+def insertion_mutation(individual, length=-1):
     """
     Inserts a random allele adjacent to another random allele
     in a given chromosome
 
     :param individual: The chromosome to mutate
+    :param length: The size of the inversion
     :return: A mutated copy of the chromosome
     """
-    positions = sorted([random.randint(0, len(individual) - 1) for x in range(2)])
+    positions = get_random_positions_based_on_cluster_size(individual, length)
     mutant = individual[:positions[0]] + individual[positions[0] + 1:positions[1] + 1]
     mutant.append(individual[positions[0]])
     mutant.extend(individual[positions[1] + 1:])
@@ -223,32 +224,32 @@ def inversion_swap(individual, length=-1):
     :param length: The size of the inversion
     :return: A mutated copy of the chromosome.
     """
+    positions = get_random_positions_based_on_cluster_size(individual, length)
+    seq = individual[positions[0]:positions[1] + 1]
+    seq.reverse()
+    return individual[:positions[0]] + seq + individual[positions[1] + 1:]
 
-    # length = int(1 / 0.3 * 2)
-    # arg should be supplied
-    # ideally   1 / kca_k * 2
+def get_random_positions_based_on_cluster_size(individual, length):
     positions = [random.randint(0, len(individual) - 1)]
-
     if positions[0] + length >= len(individual):
         positions.append(positions[0] - length)
     else:
         positions.append(positions[0] + length)
 
     positions.sort()
-    seq = individual[positions[0]:positions[1] + 1]
-    seq.reverse()
-    return individual[:positions[0]] + seq + individual[positions[1] + 1:]
 
+    return positions
 
-def scramble(individual):
+def scramble(individual, length=-1):
     """
     Scrambles a random subset of alleles in a given chromosome.
 
     :param individual: The chromosome
+    :param length: The size of the inversion
     :return: A mutated copy of the chromosome.
     """
     # get a start and end point for the scramble
-    positions = sorted([random.randint(0, len(individual)) for x in range(2)])
+    positions = get_random_positions_based_on_cluster_size(individual, length)
 
     # get the subset of the original individual that corresponds to the points
     subset = individual[positions[0]:positions[1]]
