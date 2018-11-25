@@ -174,10 +174,10 @@ def mutation(args):
 
     for i in range(len(offspring)):
         if random.random() < mutation_rate:
-            offspring[i] = inversion_swap(offspring[i], length=args['swap_length'])
+            offspring[i] = cyclic()(offspring[i], length=args['swap_length'])
 
 
-def permutation_swap(individual):
+def permutation_swap(individual, length=-1):
     """
     Swaps two alleles randomly in a chromosome.
 
@@ -239,6 +239,12 @@ def get_random_positions_based_on_cluster_size(individual, length):
     positions.sort()
 
     return positions
+
+def cyclic():
+    mutation_funcs = [scramble, inversion_swap,
+                      insertion_mutation, permutation_swap]
+
+    return random.choice(mutation_funcs)
 
 def scramble(individual, length=-1):
     """
