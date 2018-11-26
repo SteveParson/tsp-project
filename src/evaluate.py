@@ -26,14 +26,8 @@ def eval_population(args):
             city2 = population[individual_idx][allele_idx + 1]
             individual_sum += distance_matrix[city1][city2]
         individual_sum += distance_matrix[population[individual_idx][0]][population[individual_idx][-1]]
-        x = str(int(individual_sum))
 
-        if args['memoized_fitness'].get(x) is None:
-            args['memoized_fitness'][x] = int(x)
-        #else:
-            #args['memoized_fitness'][x] += 1
-
-        fitness.append(-args['memoized_fitness'][x])
+        fitness.append(-individual_sum)
 
     args['fitness'] = fitness
 
