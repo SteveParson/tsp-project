@@ -1,3 +1,4 @@
+import csv
 
 import matplotlib.pyplot as plt
 
@@ -31,21 +32,28 @@ def eval_population(args):
     args['fitness'] = fitness
 
 
-def print_stats(args):
+def print_stats(args, export, export_fp):
     fitness = args['fitness']
     args['max'] = -np.max(fitness)
     args['mean'] = -np.mean(fitness)
     args['sd'] = np.std(fitness)
     print("%d %d %d" % (args['max'], args['mean'], args['sd']))
 
+    if export:
+        with open(export_fp, 'a') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',')
+            writer.writerow([args['max'], args['mean'], args['sd']])
+
 def plot(args):
     args['plotter'].plot()
 
-def print_final(args):
+def print_final(args, visualize=False):
     x = rankify(args['fitness'])
     print("The best individual: ")
     print("#%d (fitness: %d): %s" % (0, -args['fitness'][x[0]], args['population'][x[0]]))
-    input()
+
+    # We need to halt the program so that the user can examine the plots
+    if visualize: input()
 
 def eval_offspring(args):
     """ Evaluates a population's fitness

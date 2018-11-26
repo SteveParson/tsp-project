@@ -11,6 +11,5 @@
     "box_cutting_points_n": 240,
     "kca_k": 0.4,
     "kca_proportion": true,
-    "kca_iterations": 10,
-    "performance_debug": false
+    "kca_iterations": 10
 }

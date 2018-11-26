@@ -50,6 +50,27 @@ def parse_args():
                         metavar='JSON_ARGUMENTS_FILE',
                         help='The JSON file that contains the arguments for the EA.')
 
+    parser.add_argument('--test-runs', '-t',
+                        type=int, default=1,
+                        metavar='N',
+                        help=('Number of times to run the algorithm. Used in conjunction '
+                              'with --export-data'))
+
+    parser.add_argument('--export', '-e',
+                        action='store_true',
+                        default=False,
+                        help='Whether to export data to a CSV file or not.')
+
+    parser.add_argument('--visualize', '-v',
+                        action='store_true',
+                        default=False,
+                        help='Whether to visualize the data in real-time')
+
+    parser.add_argument('--debug', '-d',
+                        action='store_true',
+                        default=False,
+                        help='Turn on performance analytics and debugging output.')
+
     return parser.parse_args()
 
 def print_performance_metrics(args):
