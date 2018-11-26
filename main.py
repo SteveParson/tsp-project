@@ -6,10 +6,10 @@ import multiprocessing as mp
 import matplotlib.pyplot as plt
 
 
-
-
 def main():
-    args = check_args()
+    cmd_args = parse_args()
+    args = load_args_from_file(cmd_args.args_file)
+
     # swap length is relative to the number of clusters
     args['swap_length'] = 3
 

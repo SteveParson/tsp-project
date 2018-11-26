@@ -38,7 +38,6 @@ def print_stats(args):
     args['sd'] = np.std(fitness)
     print("%d %d %d" % (args['max'], args['mean'], args['sd']))
 
-
 def plot(args):
     args['plotter'].plot()
 

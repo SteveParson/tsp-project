@@ -3,6 +3,8 @@ import os
 import sys
 import time
 
+import argparse
+
 import numpy as np
 
 
@@ -22,7 +24,7 @@ def order_subset_from_full_set(subset, full_set):
 
     return new_order
 
-def check_args():
+def load_args_from_file(filename):
     """
     This function gets the required arguments for the EA from a JSON
     file and returns it as a dictionary.
@@ -30,18 +32,25 @@ def check_args():
     :return: EA args as a dictionary.
     """
 
-    if len(sys.argv) == 2:
-        if not os.path.isfile(sys.argv[1]):
-            die("File '" + str(sys.argv[1]) + "' does not exist.")
+    if not os.path.isfile(filename):
+        die("File {filename} does not exist.".format(filename=filename))
 
-        with open(sys.argv[2], 'r') as f:
-            args = json.load(f)
-    else:
-        print("No argument file specified, using default...")
-        with open('default_args.json', 'r') as f:
-            args = json.load(f)
+    with open(filename, 'r') as f:
+        args = json.load(f)
 
     return args
+
+def parse_args():
+    """
+    Parse command-line arguments.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--args-file', '-a',
+                        default='default_args.json',
+                        metavar='JSON_ARGUMENTS_FILE',
+                        help='The JSON file that contains the arguments for the EA.')
+
+    return parser.parse_args()
 
 def print_performance_metrics(args):
     """
