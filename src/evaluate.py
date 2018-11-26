@@ -16,7 +16,6 @@ def eval_population(args):
 
     fitness = []
 
-    # not our actual fitness function
     for individual_idx in range(len(population)):
 
         individual_sum = 0
@@ -55,14 +54,12 @@ def eval_offspring(args):
     :param args: The global parameter dictionary
     :return: Adds 'offspring_fitness' to the dictionary
     """
-    # TODO: This is a repeat of the above. Combine them somehow
 
     population = args['offspring']
     distance_matrix = args['distance_matrix']
 
     fitness = []
 
-    # not our actual fitness function
     for individual_idx in range(len(population)):
 
         individual_sum = 0

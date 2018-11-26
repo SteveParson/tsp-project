@@ -10,13 +10,7 @@ def parents(args):
     :param args: The global EA parameter dictionary.
     :return: Adds the mating_pool indices to the parameter dictionary.
     """
-
-    if args['parent_selection'] == 'random':
-        args['mating_pool'] = random_selection(range(args['pop_size']),
-                                               args['mp_size'], False)
-
-    if args['parent_selection'] == 'tournament_selection':
-        parent_tournament_selection(args)
+    parent_tournament_selection(args)
 
 def parent_tournament_selection(args):
     """
@@ -43,13 +37,7 @@ def survivors(args):
     :param args: The global EA parameter dictionary.
     :return: Reassigns 'population' and 'fitness' in the dictionary
     """
-
-    survivor_selection = args['survivor_selection']
-    if survivor_selection == 'mu_plus_lambda':
-        mu_plus_lambda_survivor_selection(args)
-
-    if survivor_selection == 'random':
-        random_survivor_selection(args)
+    mu_plus_lambda_survivor_selection(args)
 
 def mu_plus_lambda_survivor_selection(args):
     """
@@ -65,27 +53,6 @@ def mu_plus_lambda_survivor_selection(args):
     population, fitness = [], []
 
     for index in rank_vector:
-        population.append(full_population[index])
-        fitness.append(full_fitness[index])
-
-    args['population'] = population
-    args['fitness'] = fitness
-
-def random_survivor_selection(args):
-    """
-    Random survivor selection.
-
-    :param args: The global EA parameter dictionary.
-    """
-    full_population = args['population'] + args['offspring']
-    full_fitness = args['fitness'] + args['offspring_fitness']
-    full_pool = len(full_population)
-    mu = args['pop_size']
-
-    choices = random_selection(range(full_pool), mu, False)
-    population, fitness = [], []
-
-    for index in choices:
         population.append(full_population[index])
         fitness.append(full_fitness[index])
 

@@ -25,8 +25,6 @@ def calc_distance_matrix(args):
     :return: Adds the 'distance_matrix' to the dictionary
     """
 
-    # TODO: This function is pretty expensive.
-
     dataset = args['dataset']
 
     # load the distance matrix from a file if it exists
