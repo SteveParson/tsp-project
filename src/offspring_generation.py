@@ -229,6 +229,24 @@ def inversion_swap(individual, length=-1):
     seq.reverse()
     return individual[:positions[0]] + seq + individual[positions[1] + 1:]
 
+def two_opt_swap(individual, length=None):
+    """
+    Picks two adjacent pairs of alleles and swaps their respective elements.
+
+    :param individual: The chromosome.
+    :param length: Not used here, just for compatibility.
+    :return: A mutated copy of the chromosome.
+    """
+
+    positions = get_random_positions_based_on_cluster_size(individual, 3)
+    pair1 = [positions[0], positions[0] + 1]
+    pair2 = [positions[-1] - 1, positions[-1]]
+    seq1 = individual[pair1[0]:pair1[1] + 1]
+    seq2 = individual[pair2[0]:pair2[1] + 1]
+    seq1.reverse()
+    seq2.reverse()
+    return individual[:positions[0]] + seq1 + seq2 + individual[positions[1] + 1:]
+
 def get_random_positions_based_on_cluster_size(individual, length):
     positions = [random.randint(0, len(individual) - 1)]
     if positions[0] + length >= len(individual):
@@ -242,7 +260,8 @@ def get_random_positions_based_on_cluster_size(individual, length):
 
 def cyclic():
     mutation_funcs = [scramble, inversion_swap,
-                      insertion_mutation, permutation_swap]
+                      insertion_mutation, permutation_swap,
+                      two_opt_swap]
 
     return random.choice(mutation_funcs)
 
