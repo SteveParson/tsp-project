@@ -44,7 +44,6 @@ def gen_population(args):
         # Create the population by iterating over the result objects
         pop = [p.get() for p in results]
 
-
         # Wait for the processes to finish before exiting this function
         pool.close()
         pool.join()
