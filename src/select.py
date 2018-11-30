@@ -12,6 +12,7 @@ def parents(args):
     """
     parent_tournament_selection(args)
 
+
 def parent_tournament_selection(args):
     """
     Selects parents using tournament selection.
@@ -30,6 +31,7 @@ def parent_tournament_selection(args):
 
     args['mating_pool'] = selected_to_mate
 
+
 def survivors(args):
     """
     Selects survivors in the population.
@@ -38,6 +40,7 @@ def survivors(args):
     :return: Reassigns 'population' and 'fitness' in the dictionary
     """
     mu_plus_lambda_survivor_selection(args)
+
 
 def mu_plus_lambda_survivor_selection(args):
     """
@@ -58,6 +61,7 @@ def mu_plus_lambda_survivor_selection(args):
 
     args['population'] = population
     args['fitness'] = fitness
+
 
 def random_selection(individuals, number_to_choose, with_replace=False):
     """

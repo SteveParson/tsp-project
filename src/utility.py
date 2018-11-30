@@ -24,6 +24,7 @@ def order_subset_from_full_set(subset, full_set):
 
     return new_order
 
+
 def load_args_from_file(filename):
     """
     This function gets the required arguments for the EA from a JSON
@@ -39,6 +40,7 @@ def load_args_from_file(filename):
         args = json.load(f)
 
     return args
+
 
 def parse_args():
     """
@@ -72,6 +74,7 @@ def parse_args():
                         help='Turn on performance analytics and debugging output.')
 
     return parser.parse_args()
+
 
 def print_performance_metrics(args):
     """
@@ -111,6 +114,7 @@ def print_performance_metrics(args):
     with CodeTimer('survivor selection'):
         select.survivors(args)
 
+
 def print_config(args):
     """
     Output the relevant config parameters of the EA.
@@ -124,6 +128,7 @@ def print_config(args):
         print("\t'%s': %s" % (str(k), str(v)))
     print()
 
+
 def rankify(values):
     """
     Rank an array
@@ -132,6 +137,7 @@ def rankify(values):
     :return: A ranking for the array of values
     """
     return np.argsort(np.array(values))[::-1]
+
 
 def die(error):
     """
@@ -149,6 +155,8 @@ def die(error):
 # CodeTimer derived from
 # https://stackoverflow.com/questions/14452145/how-to-measure-time-taken-between-lines-of-code-in-python
 # used to time each block, for profiling purposes
+
+
 class CodeTimer:
     def __init__(self, name=None):
         self.name = "'" + name + "'" if name else ''

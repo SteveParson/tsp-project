@@ -30,12 +30,15 @@ def main():
 
     data_import.parse_datafile(args)
     data_import.calc_distance_matrix(args)
-    initialize.gen_population(args)
 
     if cmd_args.visualize:
         initialize.create_plotter(args)
 
     for run_num in range(cmd_args.test_runs):
+
+        # reinitialize population and fitness on a per-run basis
+        initialize.gen_population(args)
+
         export_fp = "{}.{}.csv".format(cmd_args.args_file, run_num)
         if cmd_args.export:
             with open(export_fp, 'w') as fp:

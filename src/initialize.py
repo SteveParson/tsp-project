@@ -13,29 +13,39 @@ def gen_population(args):
 
     :param args: The global parameter dictionary.
     """
+
     chromosome_length = len(args['dataset'])
-    distance_matrix = args['distance_matrix']
     pop_size = args['pop_size']
     initialize_method = args['initialize_method']
-    chromosome_range = range(chromosome_length)
     pop = []
 
+    # Initialize the starting population as a randomly sampled set of the
+    # permutation space.
     if initialize_method == 'random':
         for i in range(pop_size):
-            pop.append(np.random.permutation(chromosome_range))
+            pop.append(np.random.permutation(range(chromosome_length)))
 
+    # Initialize the starting population as a randomly sampled set of the
+    # permutation space, in a sequence of concatenated clusters using
+    # the k-means algorithm.
     if initialize_method == 'kmeans':
-        # Multi-processing
-        # set this too high and too much ram is used
-        # https://stackoverflow.com/questions/18414020/memory-usage-keep-growing-with-pythons-multiprocessing-pool
-        pool = mp.Pool(processes=3)
+        # Use multiple CPUs in a multiprocessing pool to do the
+        # k-means algorithm in parallel
+        pool = mp.Pool(mp.cpu_count())
+
+        # Collect a list of result objects for each of the individuals that
+        # we would like to generate
         results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
+
+        # Create the population by iterating over the result objects
         pop = [p.get() for p in results]
+
+        # Wait for the processes to finish before exiting this function
         pool.close()
         pool.join()
 
+    # Assign the new population to the dictionary
     args['population'] = pop
-    args['memoized_fitness'] = {}
 
 
 def kmeans(args):
@@ -47,11 +57,12 @@ def kmeans(args):
     chromosome_length = len(args['dataset'])
     distance_matrix = args['distance_matrix']
 
-    # Becuse of multiprocessing, reseed
+    # Because of multiprocessing, reseed the RNG
     np.random.seed()
 
     # Get the number of clusters
     kca_k = args['kca_k']
+
     # kca_k can also be a proportion of the chromosome length
     if args['kca_proportion']:
         kca_k = int(kca_k * chromosome_length)

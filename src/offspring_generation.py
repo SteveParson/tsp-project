@@ -4,59 +4,43 @@ from .utility import *
 
 
 def recombination(args):
+    """
+    Breed offspring from the mating pool
+
+    :param args: The global parameter dictionary
+    :return:
+    """
     population = args['population']
     parents = args['mating_pool']
     mp_size = args['mp_size']
     crossover_rate = args['crossover_rate']
     recombination_type = args['recombination']
     fitness = args['fitness']
-    popsize = args['pop_size']
 
-    if recombination_type == 'cut_crossfill':
-        offspring = []
-        i = 0
-        while len(offspring) < mp_size:
-            parent1 = population[parents[i]]
-            parent2 = population[parents[i + 1]]
-            if random.random() < crossover_rate:
+    offspring = []
+    i = 0
+    while len(offspring) < mp_size:
+        parent1 = population[parents[i]]
+        parent2 = population[parents[i + 1]]
+        if random.random() < crossover_rate:
+            if recombination_type == 'cut_crossfill':
                 offspring1, offspring2 = cut_crossfill(args, list(parent1), list(parent2))
-            else:
-                offspring1 = list(population[parents[i]].copy())
-                offspring2 = list(population[parents[i + 1]].copy())
-            offspring.append(offspring1)
-            offspring.append(offspring2)
-            i = (i + 2) % mp_size
+            if recombination_type == 'best_order':
+                n = args['box_cutting_points_n']
+                J = len(population[0])
 
-    if recombination_type == 'best_order':
-        best_individual = population[np.argmax(fitness)]
+                if not (2 <= n <= J - 1):
+                    die("box_cutting_points_n is out of range")
 
-        n = args['box_cutting_points_n']
-        J = len(population[0])
-
-        if not (2 <= n <= J - 1):
-            die("box_cutting_points_n is out of range")
-
-        offspring = []
-        i = 0
-
-        while len(offspring) < mp_size:
-            # print("Parents i ", parents[i])
-            # print("Parents i ", parents[i+1])
-            # print("Population  ", population[parents[i]])
-            parent1 = population[parents[i]]
-            parent2 = population[parents[i + 1]]
-            if random.random() < crossover_rate:
+                best_individual = population[np.argmax(fitness)]
                 offspring1, offspring2 = best_order(args, J, n, parent1, parent2, best_individual)
-            else:
-                offspring1 = list(population[parents[i]].copy())
-                offspring2 = list(population[parents[i + 1]].copy())
-
-            offspring.append(offspring1)
-            offspring.append(offspring2)
-            i = (i + 2) % mp_size
-
+        else:
+            offspring1 = list(population[parents[i]].copy())
+            offspring2 = list(population[parents[i + 1]].copy())
+        offspring.append(offspring1)
+        offspring.append(offspring2)
+        i = (i + 2) % mp_size
     args['offspring'] = offspring
-    return
 
 
 # TODO: Broken
@@ -134,9 +118,6 @@ def best_order(args, J, n, parent1, parent2, best_individual):
 
 
 def cut_crossfill(args, parent1, parent2):
-    offspring1 = []
-    offspring2 = []
-
     crossover_point = random.randint(0, len(parent1) - 2)
 
     # Offspring 1
@@ -229,6 +210,7 @@ def inversion_swap(individual, length=-1):
     seq.reverse()
     return individual[:positions[0]] + seq + individual[positions[1] + 1:]
 
+
 def two_opt_swap(individual, length=None):
     """
     Picks two adjacent pairs of alleles and swaps their respective elements.
@@ -247,6 +229,7 @@ def two_opt_swap(individual, length=None):
     seq2.reverse()
     return individual[:positions[0]] + seq1 + seq2 + individual[positions[1] + 1:]
 
+
 def get_random_positions_based_on_cluster_size(individual, length):
     positions = [random.randint(0, len(individual) - 1)]
     if positions[0] + length >= len(individual):
@@ -258,12 +241,14 @@ def get_random_positions_based_on_cluster_size(individual, length):
 
     return positions
 
+
 def cyclic():
     mutation_funcs = [scramble, inversion_swap,
                       insertion_mutation, permutation_swap,
                       two_opt_swap]
 
     return random.choice(mutation_funcs)
+
 
 def scramble(individual, length=-1):
     """
