@@ -1,6 +1,7 @@
 import random
 
 from .utility import *
+import multiprocessing as mp
 
 
 def recombination(args):
@@ -17,34 +18,63 @@ def recombination(args):
     recombination_type = args['recombination']
     fitness = args['fitness']
 
+    # Use multiple CPUs in a multiprocessing pool to do the
+    # algorithm in parallel
+    number_of_cpus = mp.cpu_count() // 2
+    pool = mp.Pool(number_of_cpus)
+
+    # Remove the plotter (because of MP)
+    plotter = args.get("plotter")
+    args.pop("plotter", None)
+
+    parent_idx = 0
+    number_of_children = 0
+    results = []
     offspring = []
-    i = 0
-    while len(offspring) < mp_size:
-        parent1 = population[parents[i]]
-        parent2 = population[parents[i + 1]]
+
+    while number_of_children < mp_size:
+        parent1 = population[parents[parent_idx]]
+        parent2 = population[parents[parent_idx + 1]]
+
         if random.random() < crossover_rate:
             if recombination_type == 'cut_crossfill':
-                offspring1, offspring2 = cut_crossfill(args, list(parent1), list(parent2))
+                results.append(pool.apply_async(cut_crossfill, args=(parent1, parent2,)))
+
             if recombination_type == 'best_order':
                 n = args['box_cutting_points_n']
-                J = len(population[0])
+                chromosome_length = len(population[0])
 
-                if not (2 <= n <= J - 1):
+                if not (2 <= n <= chromosome_length - 1):
                     die("box_cutting_points_n is out of range")
 
                 best_individual = population[np.argmax(fitness)]
-                offspring1, offspring2 = best_order(args, J, n, parent1, parent2, best_individual)
+                results.append(
+                    pool.apply_async(best_order, args=(chromosome_length, n, parent1, parent2, best_individual,)))
+
         else:
-            offspring1 = list(population[parents[i]].copy())
-            offspring2 = list(population[parents[i + 1]].copy())
-        offspring.append(offspring1)
-        offspring.append(offspring2)
-        i = (i + 2) % mp_size
+            offspring.append(parent1.copy())
+            offspring.append(parent2.copy())
+
+        number_of_children += 2
+        parent_idx = (parent_idx + 2) % mp_size
+
+    # Wait for the processes to finish before exiting this function
+    mp_output = [p.get() for p in results]
+    for element in mp_output:
+        offspring.append(element[0])
+        offspring.append(element[1])
+
+    pool.close()
+    pool.join()
+
+    # Put the plotter back in
+    args['plotter'] = plotter
+
+    # Return the children
     args['offspring'] = offspring
 
 
-# TODO: Broken
-def best_order(args, J, n, parent1, parent2, best_individual):
+def best_order(J, n, parent1, parent2, best_individual):
     """ Applies best-order crossover and produces two offspring
     using the order information from three parents.
 
@@ -56,8 +86,10 @@ def best_order(args, J, n, parent1, parent2, best_individual):
     :param best_individual: The best individual in our population
     :return: Two offspring
     """
+    np.random.seed()
 
     q = [0]
+    # TODO: Examine this assumption J//3
     for i in range(n):
         q.append(q[i] + random.randint(1, (J // 3)))
     q.append(J - 1)
@@ -117,7 +149,9 @@ def best_order(args, J, n, parent1, parent2, best_individual):
     return offspring1, offspring2
 
 
-def cut_crossfill(args, parent1, parent2):
+def cut_crossfill(parent1, parent2):
+    np.random.seed()
+
     crossover_point = random.randint(0, len(parent1) - 2)
 
     # Offspring 1
@@ -126,7 +160,8 @@ def cut_crossfill(args, parent1, parent2):
     offspring1 = parent1[0: allele_index]
 
     # Fill the other half of offspring until full
-    while len(offspring1) != len(parent1):
+    lp = len(parent1)
+    while len(offspring1) != lp:
         # Grab an allele from parent2
         parent_allele = parent2[allele_index]
 
@@ -140,7 +175,7 @@ def cut_crossfill(args, parent1, parent2):
     # as above
     allele_index = crossover_point + 1
     offspring2 = parent2[0: allele_index]
-    while len(offspring2) != len(parent2):
+    while len(offspring2) != lp:
         parent_allele = parent1[allele_index]
         if parent_allele not in offspring2:
             offspring2.append(parent_allele)

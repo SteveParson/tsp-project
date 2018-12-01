@@ -28,19 +28,20 @@ def gen_population(args):
     # permutation space, in a sequence of concatenated clusters using
     # the k-means algorithm.
     if initialize_method == 'kmeans':
+
         # Use multiple CPUs in a multiprocessing pool to do the
         # k-means algorithm in parallel
-        z = mp.cpu_count()
-        pool = mp.Pool(z)
-
-        # Collect a list of result objects for each of the individuals that
-        # we would like to generate
+        number_of_cpus = mp.cpu_count()//2
+        pool = mp.Pool(number_of_cpus)
 
         # Remove the plotter (because of MP)
         plotter = args.get("plotter")
         args.pop("plotter", None)
 
+        # Collect a list of result objects for each of the individuals that
+        # we would like to generate
         results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
+
         # Create the population by iterating over the result objects
         pop = [p.get() for p in results]
 
