@@ -38,7 +38,22 @@ def recombination(args):
 
         if random.random() < crossover_rate:
             if recombination_type == 'cut_crossfill':
-                results.append(pool.apply_async(cut_crossfill, args=(parent1, parent2,)))
+                results.append(
+                    pool.apply_async(
+                        cut_crossfill, args=(
+                            np.array(parent1), np.array(parent2),
+                        )
+                    )
+                )
+
+            if recombination_type == 'uniform':
+                results.append(
+                    pool.apply_async(
+                        uniform_crossover, args=(
+                            np.array(parent1), np.array(parent2),
+                        )
+                    )
+                )
 
             if recombination_type == 'best_order':
                 n = args['box_cutting_points_n']
@@ -49,7 +64,12 @@ def recombination(args):
 
                 best_individual = population[np.argmax(fitness)]
                 results.append(
-                    pool.apply_async(best_order, args=(chromosome_length, n, parent1, parent2, best_individual,)))
+                    pool.apply_async(
+                        best_order, args=(
+                            chromosome_length, n, parent1, parent2, best_individual,
+                        )
+                    )
+                )
 
         else:
             offspring.append(parent1.copy())
@@ -61,8 +81,8 @@ def recombination(args):
     # Wait for the processes to finish before exiting this function
     mp_output = [p.get() for p in results]
     for element in mp_output:
-        offspring.append(element[0])
-        offspring.append(element[1])
+        offspring.append(list(element[0]))
+        offspring.append(list(element[1]))
 
     pool.close()
     pool.join()
@@ -149,37 +169,53 @@ def best_order(J, n, parent1, parent2, best_individual):
     return offspring1, offspring2
 
 
+def uniform_crossover(parent1, parent2):
+    chromosome_length = parent1.size
+    offspring1 = parent1.copy()
+    offspring2 = parent2.copy()
+    for x in np.arange(0, chromosome_length):
+        if x % 2:
+            offspring1[x] = parent2[x]
+            offspring2[x] = parent1[x]
+    return offspring1, offspring2
+
+
 def cut_crossfill(parent1, parent2):
     np.random.seed()
-
-    crossover_point = random.randint(0, len(parent1) - 2)
+    chromosome_length = parent1.size
+    crossover_point = np.random.randint(0, chromosome_length - 2)
 
     # Offspring 1
-    allele_index = crossover_point + 1
-    # Copy until the crossover point from parent1
-    offspring1 = parent1[0: allele_index]
+    crossover_idx = crossover_point + 1
 
-    # Fill the other half of offspring until full
-    lp = len(parent1)
-    while len(offspring1) != lp:
+    # Copy until the crossover point from parent1
+    offspring1 = parent1.copy()
+    offspring_idx = crossover_idx
+
+    # Fill the other half of offspring until we have full coverage
+    while offspring_idx != chromosome_length:
+
         # Grab an allele from parent2
-        parent_allele = parent2[allele_index]
+        parent_allele = parent2[crossover_idx]
 
         # if it's not in offspring1, put it there
-        if parent_allele not in offspring1:
-            offspring1.append(parent_allele)
+        if parent_allele not in offspring1[:offspring_idx]:
+            offspring1[offspring_idx] = parent_allele
+            offspring_idx += 1
 
         # increment and wrap around index pointer
-        allele_index = (allele_index + 1) % len(parent2)
+        crossover_idx = (crossover_idx + 1) % chromosome_length
 
     # as above
-    allele_index = crossover_point + 1
-    offspring2 = parent2[0: allele_index]
-    while len(offspring2) != lp:
-        parent_allele = parent1[allele_index]
-        if parent_allele not in offspring2:
-            offspring2.append(parent_allele)
-        allele_index = (allele_index + 1) % len(parent1)
+    crossover_idx = crossover_point + 1
+    offspring2 = parent2.copy()
+    offspring_idx = crossover_idx
+    while offspring_idx != chromosome_length:
+        parent_allele = parent1[crossover_idx]
+        if parent_allele not in offspring2[:offspring_idx]:
+            offspring2[offspring_idx] = parent_allele
+            offspring_idx += 1
+        crossover_idx = (crossover_idx + 1) % chromosome_length
 
     return offspring1, offspring2
 

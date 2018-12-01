@@ -113,6 +113,8 @@ def print_performance_metrics(args):
 
     with CodeTimer('survivor selection'):
         select.survivors(args)
+    print("Done evaluating performance")
+    raise SystemExit
 
 
 def print_config(args):

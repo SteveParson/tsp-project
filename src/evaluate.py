@@ -75,6 +75,7 @@ def plot(args):
     """
     args['plotter'].plot()
 
+
 def print_final(args, visualize=False):
     """
     Print the final fitness values

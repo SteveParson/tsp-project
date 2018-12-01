@@ -22,7 +22,7 @@ def gen_population(args):
     # permutation space.
     if initialize_method == 'random':
         for i in range(pop_size):
-            pop.append(np.random.permutation(range(chromosome_length)))
+            pop.append(list(np.random.permutation(range(chromosome_length))))
 
     # Initialize the starting population as a randomly sampled set of the
     # permutation space, in a sequence of concatenated clusters using
