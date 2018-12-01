@@ -9,6 +9,10 @@ import multiprocessing as mp
 import matplotlib.pyplot as plt
 
 
+# Current tasks
+#   - implement wilcoxon rank sum test
+
+
 def main():
     cmd_args = parse_args()
     args = load_args_from_file(cmd_args.args_file)
@@ -26,7 +30,7 @@ def main():
 
     if cmd_args.debug:
         print_performance_metrics(args)
-        evaluate.print_stats(args)
+        evaluate.print_stats(args, None, None)
 
     data_import.parse_datafile(args)
     data_import.calc_distance_matrix(args)
@@ -60,6 +64,7 @@ def main():
                 evaluate.plot(args)
 
         evaluate.print_final(args, cmd_args.visualize)
+
 
 if __name__ == "__main__":
     # If we're on MacOSX, praise Steve Jobs first
