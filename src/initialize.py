@@ -1,7 +1,6 @@
 import multiprocessing as mp
 import time
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from src.plotter import PlotHelper
@@ -31,18 +30,26 @@ def gen_population(args):
     if initialize_method == 'kmeans':
         # Use multiple CPUs in a multiprocessing pool to do the
         # k-means algorithm in parallel
-        pool = mp.Pool(mp.cpu_count())
+        z = mp.cpu_count()
+        pool = mp.Pool(z)
 
         # Collect a list of result objects for each of the individuals that
         # we would like to generate
-        results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
 
+        # Remove the plotter (because of MP)
+        plotter = args.get("plotter")
+        args.pop("plotter", None)
+
+        results = [pool.apply_async(kmeans, args=(args,)) for x in range(pop_size)]
         # Create the population by iterating over the result objects
         pop = [p.get() for p in results]
 
         # Wait for the processes to finish before exiting this function
         pool.close()
         pool.join()
+
+        # Put the plotter back in
+        args['plotter'] = plotter
 
     # Assign the new population to the dictionary
     args['population'] = pop
