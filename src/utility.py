@@ -16,11 +16,13 @@ def order_subset_from_full_set(subset, full_set):
     :param full_set: A superset of subset, from which we wish to extract order information
     :return: subset, with the order from full_set
     """
-    new_order = []
+    new_order = subset[:]
 
-    for element in full_set:
-        if element in subset:
-            new_order.append(element)
+    j = 0
+    for i in range(len(full_set)):
+        if full_set[i] in subset:
+            new_order[j] = full_set[i]
+            j += 1
 
     return new_order
 

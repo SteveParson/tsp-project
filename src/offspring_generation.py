@@ -108,19 +108,14 @@ def best_order(J, n, parent1, parent2, best_individual):
     """
     np.random.seed()
 
-    q = [0]
-    # TODO: Examine this assumption J//3
-    for i in range(n):
-        q.append(q[i] + random.randint(1, (J // 3)))
-    q.append(J - 1)
-    q.sort()
+    q = np.arange(n)
+    q[-1] = J
 
     bad_cutting_point_sequence = True
     while bad_cutting_point_sequence:
-
-        q = [0]
-        q.extend(sorted(random.sample(range(1, J), n - 2)))
-        q.append(J)
+        subarray = np.random.choice(np.arange(1, J), n - 2, replace=False)
+        subarray.sort()
+        q[1:n - 1] = subarray
 
         if len(q) != n:
             die("wrong size")
@@ -138,8 +133,8 @@ def best_order(J, n, parent1, parent2, best_individual):
     # print("q: ", q)
     # print("pc: ", parent_choices)
 
-    offspring1 = []
-    offspring2 = []
+    offspring1 = np.zeros(J, dtype=int)
+    offspring2 = np.zeros(J, dtype=int)
 
     for i in range(len(q) - 1):
         sp = q[i]
@@ -161,8 +156,8 @@ def best_order(J, n, parent1, parent2, best_individual):
             alleles2 = order_subset_from_full_set(parent2[sp:ep], best_individual)
             # print("pc3: ", parent1[sp:ep], alleles1)
 
-        offspring1.extend(alleles1)
-        offspring2.extend(alleles2)
+        offspring1[sp:ep] = alleles1
+        offspring2[sp:ep] = alleles2
 
     # print("parents: \n\t%s\n\t%s\n\t%s" %(parent1, parent2, best_individual))
     # print("offspring: \n\t%s\n\t%s " %(offspring1, offspring2))
