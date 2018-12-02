@@ -38,16 +38,16 @@ def main():
     if cmd_args.visualize:
         initialize.create_plotter(args)
 
+    export_fp = "{}.csv".format(cmd_args.args_file)
+    if cmd_args.export:
+        with open(export_fp, 'w') as fp:
+            writer = csv.writer(fp, delimiter=',')
+            writer.writerow(['run', 'best fitness'])
+
     for run_num in range(cmd_args.test_runs):
 
         # reinitialize population and fitness on a per-run basis
         initialize.gen_population(args)
-
-        export_fp = "{}.{}.csv".format(cmd_args.args_file, run_num)
-        if cmd_args.export:
-            with open(export_fp, 'w') as fp:
-                writer = csv.writer(fp, delimiter=',')
-                writer.writerow(['max', 'mean', 'std dev'])
 
         for i in range(args['generations']):
             args['current_gen'] = i
@@ -58,12 +58,14 @@ def main():
             offspring_generation.mutation(args)
             evaluate.eval_offspring(args)
             select.survivors(args)
-            evaluate.print_stats(args, cmd_args.export, export_fp)
+            evaluate.print_stats(args)
 
             if cmd_args.visualize:
                 evaluate.plot(args)
 
-        evaluate.print_final(args, cmd_args.visualize)
+        evaluate.print_final(args, export_fp, run_num,
+                             cmd_args.visualize,
+                             cmd_args.export)
 
 
 if __name__ == "__main__":

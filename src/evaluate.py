@@ -44,7 +44,7 @@ def eval_population(args):
     args['fitness'] = fitness
 
 
-def print_stats(args, export, export_fp):
+def print_stats(args):
     """
     Print statistics about a current generation
 
@@ -59,13 +59,6 @@ def print_stats(args, export, export_fp):
     args['sd'] = np.std(fitness)
     print("Max: %d\tMean: %d\tSD: %d" % (args['max'], args['mean'], args['sd']))
 
-    # Write the the output to a CSV file, if specified.
-    if export:
-        with open(export_fp, 'a') as csvfile:
-            writer = csv.writer(csvfile, delimiter=',')
-            writer.writerow([args['max'], args['mean'], args['sd']])
-
-
 def plot(args):
     """
     Wrapper function to call the plotter.
@@ -76,7 +69,7 @@ def plot(args):
     args['plotter'].plot()
 
 
-def print_final(args, visualize=False):
+def print_final(args, export_fp, run_num, visualize=False, export=False):
     """
     Print the final fitness values
 
@@ -87,6 +80,12 @@ def print_final(args, visualize=False):
     distribution = rankify(args['fitness'])
     print("The best individual: ")
     print("#%d (fitness: %d): %s" % (0, -args['fitness'][distribution[0]], args['population'][distribution[0]]))
+
+    # Write the the output to a CSV file, if specified.
+    if export:
+        with open(export_fp, 'a') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',')
+            writer.writerow([run_num, -args['fitness'][distribution[0]]])
 
     # TODO: Change this check to look for args['plotter'] instead, so that we
     # TODO: can loose the parameter in the method
