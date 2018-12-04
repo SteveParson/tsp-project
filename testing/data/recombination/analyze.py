@@ -19,7 +19,7 @@ def compute_mann_whitney_u(datafile1, datafile2):
     stat, p = mannwhitneyu(data1, data2, alternative='two-sided')
     print('Statistics={:.3f}, p={:.4f}'.format(stat, p))
 
-def visualize():
+def create_line_plot():
     data1 = load_data_from_file("best_order.json.csv")
     data2 = load_data_from_file("cut_crossfill.json.csv")
     indices = list(range(1, 31))
@@ -41,7 +41,42 @@ def visualize():
     plt.legend(handles=[orange_patch, green_patch])
     plt.savefig("best_order_vs_cut_crossfill.png", dpi=300)
 
+def create_box_plot():
+    data1 = load_data_from_file("best_order.json.csv")
+    data2 = load_data_from_file("cut_crossfill.json.csv")
+    all_data = [data1, data2]
+    labels = ['Best order', 'Cut and crossfill']
+
+    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(5, 4))
+
+    bplot = axes.boxplot(all_data, vert=True, notch=True,
+                         patch_artist=True, labels=labels)
+    axes.set_title('Best order vs. cut and crossfill')
+
+    colors = ['lightblue', 'lightgreen']
+    for patch, color in zip(bplot['boxes'], colors):
+        patch.set_facecolor(color)
+
+    axes.yaxis.grid(True)
+    axes.set_xlabel('Crossover operators')
+    axes.set_ylabel('Fitness (Euclidean distance)')
+
+    plt.savefig("boxplot.png", dpi=300)
+
+def create_histogram():
+    data1 = load_data_from_file("best_order.json.csv")
+    data2 = load_data_from_file("cut_crossfill.json.csv")
+
+    plt.hist(data1, alpha=0.5, bins=20, label='Best Order',
+             edgecolor='black', linewidth=1.2)
+    plt.hist(data2, alpha=0.5, bins=20, label='Cut and Crossfill',
+             edgecolor='black', linewidth=1.2)
+    plt.legend(loc='upper right')
+    plt.ylabel('Fitness (Euclidean distance)')
+
+    plt.savefig("histogram.png", dpi=300)
+
 if __name__ == '__main__':
     compute_mann_whitney_u("best_order.json.csv",
                            "cut_crossfill.json.csv")
-    visualize()
+    create_histogram()
