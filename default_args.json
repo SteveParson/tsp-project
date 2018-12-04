@@ -5,6 +5,7 @@
     "mp_size": 100,
     "tournament_size": 5,
     "recombination": "best_order",
+    "mutation": "cyclic",
     "crossover_rate": 0.9,
     "mutation_rate": 0.8,
     "generations": 1000,

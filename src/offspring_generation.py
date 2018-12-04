@@ -217,11 +217,12 @@ def cut_crossfill(parent1, parent2):
 
 def mutation(args):
     mutation_rate = args['mutation_rate']
+    mutation_func = MUTATION_FUNCTIONS[args['mutation']]
     offspring = args['offspring']
 
     for i in range(len(offspring)):
         if random.random() < mutation_rate:
-            offspring[i] = cyclic()(offspring[i], length=args['swap_length'])
+            offspring[i] = mutation_func(offspring[i], length=args['swap_length'])
 
 
 def permutation_swap(individual, length=-1):
@@ -308,13 +309,14 @@ def get_random_positions_based_on_cluster_size(individual, length):
     return positions
 
 
-def cyclic():
+def cyclic(individual, length):
     mutation_funcs = [scramble, inversion_swap,
                       insertion_mutation, permutation_swap,
                       two_opt_swap]
 
-    return random.choice(mutation_funcs)
+    func = random.choice(mutation_funcs)
 
+    return func(individual, length)
 
 def scramble(individual, length=-1):
     """
@@ -335,3 +337,13 @@ def scramble(individual, length=-1):
 
     # return the mutant
     return individual[:positions[0]] + subset + individual[positions[1]:]
+
+
+MUTATION_FUNCTIONS = {
+    "scramble": scramble,
+    "inversion": inversion_swap,
+    "insertion": insertion_mutation,
+    "permutation_swap": permutation_swap,
+    "two_opt": two_opt_swap,
+    "cyclic": cyclic,
+}
