@@ -67,12 +67,17 @@ def create_histogram():
     data1 = load_data_from_file("best_order.json.csv")
     data2 = load_data_from_file("cut_crossfill.json.csv")
 
-    plt.hist(data1, alpha=0.5, bins=20, label='Best Order',
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
+
+    ax1.hist(data1, alpha=0.5,
              edgecolor='black', linewidth=1.2)
-    plt.hist(data2, alpha=0.5, bins=20, label='Cut and Crossfill',
-             edgecolor='black', linewidth=1.2)
-    plt.legend(loc='upper right')
-    plt.ylabel('Fitness (Euclidean distance)')
+    ax1.set_xlabel('Fitness (Euclidean distance)')
+    ax1.set_title('Best Order')
+
+    ax2.hist(data2, alpha=0.5, label='Cut and Crossfill',
+             edgecolor='black', linewidth=1.2, color='green')
+    ax2.set_xlabel('Fitness (Euclidean distance)')
+    ax2.set_title('Cut and Crossfill')
 
     plt.savefig("histogram.png", dpi=300)
 
