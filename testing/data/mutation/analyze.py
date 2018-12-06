@@ -16,7 +16,7 @@ def load_data_from_file(filename):
 def compute_mann_whitney_u(datafile1, datafile2):
     data1 = load_data_from_file(datafile1)
     data2 = load_data_from_file(datafile2)
-    stat, p = mannwhitneyu(data1, data2, alternative='two-sided')
+    stat, p = mannwhitneyu(data1, data2, alternative='less')
     print('Statistics={:.3f}, p={:.4f}'.format(stat, p))
 
 def create_line_plot():
