@@ -65,6 +65,35 @@ def create_line_plot():
                ncol=3)
     plt.savefig("line_plot.png", dpi=300)
 
+def create_box_plot():
+    data1 = load_data_from_file("cyclic.json.csv")
+    data2 = load_data_from_file("inversion.json.csv")
+    data3 = load_data_from_file("insertion.json.csv")
+    data4 = load_data_from_file("permutation_swap.json.csv")
+    data5 = load_data_from_file("two_opt.json.csv")
+    data6 = load_data_from_file("scramble.json.csv")
+    all_data = [data1, data2, data3, data4, data5, data6]
+    labels = ['Cyclic', 'Inversion', 'Insertion', 'Permutation\nSwap',
+              'Two-Opt', 'Scramble']
+
+    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 4))
+
+    bplot = axes.boxplot(all_data, vert=False, notch=True,
+                         patch_artist=True, labels=labels)
+    axes.set_title('Cyclic mutation vs. others')
+
+    colors = ['tab:orange', 'tab:green', 'tab:blue',
+              'tab:red', 'tab:pink', 'tab:gray']
+    for patch, color in zip(bplot['boxes'], colors):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.5)
+
+    axes.yaxis.grid(True)
+    axes.set_ylabel('Mutation operators')
+    axes.set_xlabel('Fitness (Euclidean distance)')
+
+    plt.savefig("boxplot.png", dpi=300)
+
 if __name__ == '__main__':
     files = {
         'Scramble operator': 'scramble.json.csv',
@@ -79,5 +108,5 @@ if __name__ == '__main__':
         compute_mann_whitney_u("cyclic.json.csv", filename)
         print("-------------------------------------------------")
 
-    create_line_plot()
+    create_box_plot()
 
