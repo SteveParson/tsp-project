@@ -161,8 +161,6 @@ def die(error):
 # CodeTimer derived from
 # https://stackoverflow.com/questions/14452145/how-to-measure-time-taken-between-lines-of-code-in-python
 # used to time each block, for profiling purposes
-
-
 class CodeTimer:
     def __init__(self, name=None):
         self.name = "'" + name + "'" if name else ''

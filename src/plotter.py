@@ -10,7 +10,6 @@ from .utility import rankify
 
 # adapted from https://matplotlib.org/gallery/misc/multiprocess_sgskip.html
 # by Robert Cimrman
-
 class PlotHelper(object):
     """
     Plot helper class, assists with multithreading
@@ -107,7 +106,7 @@ class RealPlotter(object):
             x1.append(dataset[population[x[0]][i]][0])
             y.append(-dataset[population[x[0]][i]][1])
 
-        # add the first city to connect to the last
+        # Add the first city to connect to the last
         x1.append(dataset[population[x[0]][0]][0])
         y.append(-dataset[population[x[0]][0]][1])
 
