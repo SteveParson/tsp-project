@@ -39,7 +39,7 @@ def recombination(args):
                 n = args['box_cutting_points_n']
                 chromosome_length = len(population[0])
 
-                if not (2 <= n <= chromosome_length - 1):
+                if n < 5 or (n > chromosome_length - 1):
                     die("box_cutting_points_n is out of range")
 
                 best_individual = population[np.argmax(fitness)]
