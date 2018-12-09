@@ -75,6 +75,7 @@ def print_final(args, export_fp, run_num, visualize=False, export=False):
 
     :param args: The global parameter dictionary
     :param visualize: A boolean value, which indicates whether or not visualization is currently in use.
+    :param export: A boolean value, which indicates whether or not the statistics are to be exported to a file.
     :return:
     """
     distribution = rankify(args['fitness'])

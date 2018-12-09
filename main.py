@@ -9,50 +9,65 @@ import multiprocessing as mp
 import matplotlib.pyplot as plt
 
 
-# Current tasks
-#   - implement wilcoxon rank sum test
-
-
 def main():
-    cmd_args = parse_args()
-    args = load_args_from_file(cmd_args.args_file)
+    # Print header
+    print("EA-TSP by E Garg, S Parson, T Rahman, J Wagner")
 
+    # Get the command line arguments, and load the algorithm parameters
+    # from a file. Also, read the data file and calculate the node distance
+    # matrix.
+    cmd_args = parse_args()
+    args = load_params_from_file(cmd_args.args_file)
+    data_import.parse_datafile(args)
+    data_import.calc_distance_matrix(args)
+
+    # TODO: This belongs somewhere else
     # swap length is relative to the number of clusters
     args['swap_length'] = 3
 
-    print("EA-TSP by E Garg, S Parson, T Rahman, J Wagner")
+    # Display the runtime arguments to the user
+    print_config(args)
 
+    ##########################################################################
+    # COMMAND LINE ARG HANDLING
+    ##########################################################################
+
+    # Incompatible command line args
     if cmd_args.visualize and cmd_args.test_runs > 1:
         print("WARNING: Can't plot real-time data for more than one test run!")
         cmd_args.visualize = False
 
-    print_config(args)
-
+    # Just display algorithmic speed information for one generation and then
+    # exit
     if cmd_args.debug:
         print_performance_metrics(args)
-        evaluate.print_stats(args, None, None)
 
-    data_import.parse_datafile(args)
-    data_import.calc_distance_matrix(args)
-
+    # Create a graphical display if specified.
     if cmd_args.visualize:
         initialize.create_plotter(args)
 
+    # If the user would like to export the results to a file, set up a
+    # file to do so.
     export_fp = "{}.csv".format(cmd_args.args_file)
     if cmd_args.export:
         with open(export_fp, 'w') as fp:
             writer = csv.writer(fp, delimiter=',')
             writer.writerow(['run', 'best fitness'])
 
+    ##########################################################################
+    # MAIN LOOP
+    ##########################################################################
+    # Run the algorithm for the specified number of runs
     for run_num in range(cmd_args.test_runs):
 
-        # reinitialize population and fitness on a per-run basis
+        # Reinitialize population and fitness on a per-run basis
         initialize.gen_population(args)
+        evaluate.eval_population(args)
 
+        # Run each run for the specified number of generations
         for i in range(args['generations']):
             args['current_gen'] = i
             print("Generation %d: " % i, end="")
-            evaluate.eval_population(args)
             select.parents(args)
             offspring_generation.recombination(args)
             offspring_generation.mutation(args)
@@ -60,6 +75,7 @@ def main():
             select.survivors(args)
             evaluate.print_stats(args)
 
+            # Plot the current generation
             if cmd_args.visualize:
                 evaluate.plot(args)
 

@@ -46,15 +46,6 @@ def recombination(args):
                     )
                 )
 
-            if recombination_type == 'uniform':
-                results.append(
-                    pool.apply_async(
-                        uniform_crossover, args=(
-                            np.array(parent1), np.array(parent2),
-                        )
-                    )
-                )
-
             if recombination_type == 'best_order':
                 n = args['box_cutting_points_n']
                 chromosome_length = len(population[0])
@@ -161,17 +152,6 @@ def best_order(J, n, parent1, parent2, best_individual):
 
     # print("parents: \n\t%s\n\t%s\n\t%s" %(parent1, parent2, best_individual))
     # print("offspring: \n\t%s\n\t%s " %(offspring1, offspring2))
-    return offspring1, offspring2
-
-
-def uniform_crossover(parent1, parent2):
-    chromosome_length = parent1.size
-    offspring1 = parent1.copy()
-    offspring2 = parent2.copy()
-    for x in np.arange(0, chromosome_length):
-        if x % 2:
-            offspring1[x] = parent2[x]
-            offspring2[x] = parent1[x]
     return offspring1, offspring2
 
 
@@ -317,6 +297,7 @@ def cyclic(individual, length):
     func = random.choice(mutation_funcs)
 
     return func(individual, length)
+
 
 def scramble(individual, length=-1):
     """

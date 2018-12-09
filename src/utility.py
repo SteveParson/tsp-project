@@ -27,7 +27,7 @@ def order_subset_from_full_set(subset, full_set):
     return new_order
 
 
-def load_args_from_file(filename):
+def load_params_from_file(filename):
     """
     This function gets the required arguments for the EA from a JSON
     file and returns it as a dictionary.
@@ -129,6 +129,8 @@ def print_config(args):
 
     print("\nRuntime parameters:")
     for k, v in sorted(args.items()):
+        if k == "dataset" or k == "distance_matrix":
+            continue
         print("\t'%s': %s" % (str(k), str(v)))
     print()
 
