@@ -30,8 +30,8 @@ def recombination(args):
         if random.random() < crossover_rate:
             if recombination_type == 'cut_crossfill':
                 results.append(
-                    cut_crossfill, args=(
-                        np.array(parent1), np.array(parent2),
+                    cut_crossfill(
+                        np.array(parent1), np.array(parent2)
                     )
                 )
 
@@ -99,7 +99,6 @@ def best_order(J, n, parent1, parent2, best_individual):
 
     # assign a parent for each sequence
     parent_choices = [random.randint(1, 3) for subsequence in range(n - 1)]
-
 
     offspring1 = np.zeros(J, dtype=int)
     offspring2 = np.zeros(J, dtype=int)
