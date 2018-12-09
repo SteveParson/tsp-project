@@ -85,3 +85,5 @@ if __name__ == '__main__':
     compute_mann_whitney_u("best_order.json.csv",
                            "cut_crossfill.json.csv")
     create_histogram()
+    create_box_plot()
+    create_line_plot()

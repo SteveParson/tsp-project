@@ -109,4 +109,5 @@ if __name__ == '__main__':
         print("-------------------------------------------------")
 
     create_box_plot()
+    create_line_plot()
 
