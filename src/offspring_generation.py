@@ -18,15 +18,6 @@ def recombination(args):
     recombination_type = args['recombination']
     fitness = args['fitness']
 
-    # Use multiple CPUs in a multiprocessing pool to do the
-    # algorithm in parallel
-    number_of_cpus = mp.cpu_count() // 2
-    pool = mp.Pool(number_of_cpus)
-
-    # Remove the plotter (because of MP)
-    plotter = args.get("plotter")
-    args.pop("plotter", None)
-
     parent_idx = 0
     number_of_children = 0
     results = []
@@ -39,10 +30,8 @@ def recombination(args):
         if random.random() < crossover_rate:
             if recombination_type == 'cut_crossfill':
                 results.append(
-                    pool.apply_async(
-                        cut_crossfill, args=(
-                            np.array(parent1), np.array(parent2),
-                        )
+                    cut_crossfill, args=(
+                        np.array(parent1), np.array(parent2),
                     )
                 )
 
@@ -55,10 +44,8 @@ def recombination(args):
 
                 best_individual = population[np.argmax(fitness)]
                 results.append(
-                    pool.apply_async(
-                        best_order, args=(
-                            chromosome_length, n, parent1, parent2, best_individual,
-                        )
+                    best_order(
+                        chromosome_length, n, parent1, parent2, best_individual,
                     )
                 )
 
@@ -69,17 +56,9 @@ def recombination(args):
         number_of_children += 2
         parent_idx = (parent_idx + 2) % mp_size
 
-    # Wait for the processes to finish before exiting this function
-    mp_output = [p.get() for p in results]
-    for element in mp_output:
+    for element in results:
         offspring.append(list(element[0]))
         offspring.append(list(element[1]))
-
-    pool.close()
-    pool.join()
-
-    # Put the plotter back in
-    args['plotter'] = plotter
 
     # Return the children
     args['offspring'] = offspring
@@ -89,7 +68,6 @@ def best_order(J, n, parent1, parent2, best_individual):
     """ Applies best-order crossover and produces two offspring
     using the order information from three parents.
 
-    :param args: Our parameter dictionary
     :param J: The length of our chromosome
     :param n: The number of cutting points for crossover
     :param parent1: Our first parent
@@ -121,8 +99,7 @@ def best_order(J, n, parent1, parent2, best_individual):
 
     # assign a parent for each sequence
     parent_choices = [random.randint(1, 3) for subsequence in range(n - 1)]
-    # print("q: ", q)
-    # print("pc: ", parent_choices)
+
 
     offspring1 = np.zeros(J, dtype=int)
     offspring2 = np.zeros(J, dtype=int)
@@ -131,27 +108,21 @@ def best_order(J, n, parent1, parent2, best_individual):
         sp = q[i]
         ep = q[i + 1]
 
-        # print("i is ", i)
         if parent_choices[i] == 1:
             alleles1 = parent1[sp:ep]
             alleles2 = parent2[sp:ep]
-            # print("pc1: ", parent1[sp:ep], alleles1)
 
         if parent_choices[i] == 2:
             alleles1 = order_subset_from_full_set(parent1[sp:ep], parent2)
             alleles2 = order_subset_from_full_set(parent2[sp:ep], parent1)
-            # print("pc2: ", parent1[sp:ep], alleles1)
 
         if parent_choices[i] == 3:
             alleles1 = order_subset_from_full_set(parent1[sp:ep], best_individual)
             alleles2 = order_subset_from_full_set(parent2[sp:ep], best_individual)
-            # print("pc3: ", parent1[sp:ep], alleles1)
 
         offspring1[sp:ep] = alleles1
         offspring2[sp:ep] = alleles2
 
-    # print("parents: \n\t%s\n\t%s\n\t%s" %(parent1, parent2, best_individual))
-    # print("offspring: \n\t%s\n\t%s " %(offspring1, offspring2))
     return offspring1, offspring2
 
 
