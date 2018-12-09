@@ -333,4 +333,4 @@ THE ABSTRACT\vskip12pt}\let\go\relax\fi
 \setboolean{shortarticle}{false}
 \setboolean{displaycopyright}{true}
 \dates{Compiled \today}
-\doi{\url{http://dx.doi.org/10.1364/ao.XX.XXXXXX}}
+\doi{\url{}}

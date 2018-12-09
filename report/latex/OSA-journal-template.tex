@@ -12,16 +12,16 @@
 
 \title{An Approach To The Traveling Salesman Problem Using A Hybrid Genetic Algorithm}
 
-\author[1,2,3]{E Garg}
-\author[2,*]{S Parson}
-\author[1]{T Rahman}
-\author[1]{J Wagner}
+%\author{E Garg}
+%\author{S Parson}
+%\author{T Rahman}
+\author{E Garg, S Parson, T Rahman, J Wagner}
 
-\affil[1]{Publications Department, The Optical Society (OSA), 2010 Massachusetts Avenue NW, Washington D.C., 20036}
-\affil[2]{School of Science, University of Technology, 2000 J St. NW, Washington DC, 20036}
-\affil[3]{School of Optics, University of Technology, 2000 J St. NW, Washington DC, 20036}
+%\affil[1]{Publications Department, The Optical Society (OSA), 2010 Massachusetts Avenue NW, Washington D.C., 20036}
+%\affil[2]{School of Science, University of Technology, 2000 J St. NW, Washington DC, 20036}
+%\affil[3]{School of Optics, University of Technology, 2000 J St. NW, Washington DC, 20036}
 
-\affil[*]{Corresponding author: email@my-email.com}
+%\affil[*]{Corresponding author: email@my-email.com}
 
 %% To be edited by editor
 % \dates{Compiled \today}
@@ -32,7 +32,7 @@
 % \doi{\url{http://dx.doi.org/10.1364/XX.XX.XXXXXX}}
 
 \begin{abstract}
-This paper explores the application and performance testing of a hybrid genetic algorithm implemented in Python. Variations of crossover and mutation are compared in a battle for fastest time to (near) convergence. The results lead us to infer that there is a need for reinforcement learning to exit deep local minima. 
+This paper explores the application and performance testing of a hybrid genetic algorithm implemented in Python. Variations of crossover and mutation are compared in a battle for fastest time to (near) convergence. The results shed a light on the nature of the search space and a better understanding of the fitness landscape's multitude of local (near-optimal) minima.  There is potential for improvement for this algorithm, especially in regards to changing parameters as we plateau. It can be inferred that there is a need for reinforcement learning to exit deep local minima, however the performance of the algorithm is acceptably close to optimum. 
 \end{abstract}
 
 \setboolean{displaycopyright}{false}
@@ -59,7 +59,8 @@ As previously discussed, the search space for this problem is enormously large. 
 
 There is a strong need to remove unlikely candidates from the solution space. One method to reduce the number of solutions is to group nearby nodes into individual \textit{clusters}. 
 
-Being one of the most popular clustering algorithms, \textit{k-means clustering} was chosen the organize the nodes. Given a number \textit{k}, all the nodes are separated into \texit{k} clusters. Each cluster has a node that acts as the centre of the cluster. Then, the algorithm iterates over each node and assigns it to the cluster with the centre node that it is closest to. Conceptually, it can be thought of as dividing the TSP problem into smaller TSP sub-problems.\cite{hartigan1979algorithm}\cite{wilkin2007k} The algorithm can be concisely expressed as the following series of steps:
+Being one of the most popular clustering algorithms, \textit{k-means clustering} was chosen the organize the nodes. Given a number \textit{k}, all the nodes are separated into \textit{k} clusters. Each cluster has a node that acts as the centre of the cluster. Then, the algorithm iterates over each node and assigns it to the cluster with the centre node that it is closest to. Conceptually, it can be thought of as dividing the TSP problem into smaller TSP sub-problems\cite{hartigan1979algorithm} \cite{wilkin2007k}. The algorithm can be concisely expressed as the following series of steps:
+
 \begin{enumerate}
     \item Given a number \textit{k}, randomly pick \textit{k} cities that will act as cluster centres.
     \item For every city \textit{C}:
@@ -85,12 +86,14 @@ As discussed previously, our population is modeled as instances of orderings. Th
 \subsection{Parent Selection}
 Tournament selection was the method of choice for parent selection. It was chosen due to the fact that it adds an extra element of randomness to the algorithm to try to combat the problem of reaching local minima. It involves the following steps:
 
-1. Pick $k$ individuals randomly, without replacement.\\
-2. Out of these $k$ individuals, select the individual with the best fitness and add it to the mating pool.\\
-3. Repeat until a mating pool of the desired size is obtained.\\
+\begin{enumerate}
+    \item Pick $k$ individuals randomly, without replacement.
+    \item Out of these $k$ individuals, select the individual with the best fitness and add it to the mating pool.
+    \item Repeat until a mating pool of the desired size is obtained.
+\end{enumerate}
 
 \subsection{Recombination}
-To perform crossover between chromosomes, two operators were implemented and compared. The first of which, called "cut-and-crossfill" is implemented, which is then compared to a newer method called "best-order".
+To perform crossover between chromosomes, two operators were implemented and compared. The first of which, called \textit{cut-and-crossfill} is implemented, which is then compared to a newer method called \textit{best-order}.
 
 \textbf{Cut-And-Crossfill}: As described in Eiben's book, cut-and-crossfill is a relatively simple algorithm for recombining two chromosomes into a pair of chromosomes, using information from both parent chromosomes\cite{eiben2008introduction}.
 
@@ -99,20 +102,20 @@ The algorithm can be concisely expressed as the following series of steps:
     \item Define a new empty arrays $o_1$ and $o_2$
     \item Choose a random point $j$ on the interval $[1, k-1]$ where $k$ is the length of the chromosome.
     \item Copy elements $[0, j]$ from the first parent into $o_1$
-    \item Append to $o_1$ the element $[j+1, k]$ of the first parent
+    \item Append to $o_1$ the elements $[j+1, k]$ of the first parent
     \item Copy elements $[0, j]$ from the second parent into $o_2$
     \item Append to $o_2$ the elements $[j+1, k]$ of the second parent
 \end{enumerate}
 
 The algorithm's ease-of-implementation and computational speed make it the algorithm of choice to compare to newer, more complicated operators.
 
-\textbf{Best Order Crossover}: Best-order crossover is predicated on the assumption that the order of the alleles is more important than their positions. This operator incorporates genetic material from the current best chromosome in the population along with the genetic material from the two parent chromosomes participating. Thus, the order of particular genes in the offspring can be informed by the order of those genes in the best individual chromosome present in the population\cite{andreica2015best}.
+\textbf{Best-Order Crossover}: Best-order crossover is predicated on the assumption that the order of the alleles is more important than their positions. This operator incorporates genetic material from the current best chromosome in the population along with the genetic material from the two parent chromosomes participating. Thus, the order of particular genes in the offspring can be informed by the order of those genes in the best individual chromosome present in the population\cite{andreica2015best}.
 
 In the current problem context, the information describing the order of alleles with respect to each other is more important than a particular allele being present in a specific location, since there is no restriction on the starting position.
 
 The Best Order Crossover operator involves the following steps:
 \begin{enumerate}
-    \item Pick $n$ random crossover points, resulting in $n+1$ sub-sequences.
+    \item Pick $n$ random crossover points, resulting in $n+1$ sub-sequences of specified minimum length.
     \item For each resulting sub-sequence:
     \begin{enumerate}
         \item Generate a random integer between $r$, where $1 <= r <= 3$.
@@ -139,7 +142,7 @@ For mutation, we used permutation swap, insertion mutation, inversion mutation, 
 For this mutation operator, two random alleles in the chromosome are chosen and the sub-sequence of alleles between them are scrambled. The length of the sub-sequence to be scrambled can be specified in advance.
 
 \textbf{2-Opt Swap Mutation}
-This operator was inspired by the 2-opt local search algorithm, which is often employed to solve the Travelling Salesman Problem (TSP).  This mutation operator picks two adjacent pairs of alleles and swaps their respective elements\cite{croes1958method}.
+This operator was inspired by the 2-opt local search algorithm, which is often employed to solve this problem class.  This mutation operator picks two adjacent pairs of alleles and swaps their respective elements\cite{croes1958method}.
 
 This operator involves the following steps:
 
@@ -165,12 +168,8 @@ We used ($\mu$ + $\lambda$) selection for survivor selection, which involves the
 
 
 
-
-
-
-
 \section{Discussion}
-For all results, the Uruguay data set was used as the basis of comparison, with all other parameters of the algorithm held constant, other than the parameter under test. These parameters are expressed in Table \ref{tab:parameters}. Uruguay was chosen due to the fact that the solution space is very large and the we can perform a run of this algorithm in a manageable amount of time.
+For all results in this section, the Uruguay data set was used as the basis of comparison, with all other parameters of the algorithm held constant, other than the parameter under test. These parameters are expressed in Table \ref{tab:parameters}. Uruguay was chosen due to the fact that the solution space is very large and the we can perform a run of this algorithm in a manageable amount of time.
 \begin{table}[htbp]
 \centering
 \caption{\bf Parameters Of The Hybrid Genetic Algorithm}
@@ -178,7 +177,7 @@ For all results, the Uruguay data set was used as the basis of comparison, with 
 \hline
 Parameter & Value \\
 \hline
-Data Source && $TSP$_$Uruguay$_$734.txt$ \\
+Data Source && $TSP\_Uruguay\_734.txt$ \\
 Pop. Size && $20$ \\
 Init. Method && $k-means$ \\
 Mating Pool Size && $10$ \\
@@ -239,6 +238,14 @@ For each crossover algorithm, thirty runs were conducted with all other paramete
 \end{figure}
 
 \subsection{Mutation}
+
+
+
+
+Figure \ref{fig:mg} gives a clear indication of the performance of each mutation operator. There is a clear gap in the performance as evidenced by the non-overlapping range of samples. It is evident that the best performing mutation operators are cyclic and scramble, however we cannot make any conclusion as to which is better. Looking at the notched boxplots in Figure \ref{fig:bpm} we notice that, between cyclic and scramble, the confidence intervals and median are nearly the same. The scramble mutation has a slightly larger range in the right tail, but there is not enough information to determine whether or not this is statistically significant.
+
+It is important to note that the resultant mean fitness of both cyclic and scramble is about 104,000. This 131\% of the optimum distance of 79,114. This result is acceptable to us, in that we have only calculated 1000 generations to achieve this result.
+
 \begin{figure}[htbp]
 \centering
 \fbox{\includegraphics[width=\linewidth]{graphmut.png}}
@@ -253,14 +260,53 @@ For each crossover algorithm, thirty runs were conducted with all other paramete
 \label{fig:bpm}
 \end{figure}
 
+As one might expect from Figure \ref{fig:bpm}, one-tailed Mann-Whitney-U tests reject the null hypothesis with an infinitesimally small p-value, with the exception of the comparison between scramble and cyclic mutation.
+
+\subsection{Tuning Parameters}
+The Python implementation described in this paper uses a number of parameters whose usage is explained in detail in the User Guide. Of these parameters, a select few are described in detail.
+
+\textbf{box\_cutting\_points\_n} defines the number of crossover points chosen when using the best-order crossover operator. As we can see from Figure \ref{fig:boci}, varying this value only makes a minimal change to the boxplot. As expected, the Mann-Whitney-U test between all permutations of pairs of this set produces no rejection of the null hypothesis, with p-values near 0.50.
+\begin{figure}[htbp]
+\centering
+\fbox{\includegraphics[width=\linewidth]{boci.png}}
+\caption{Boxplots of three different parameters for the best-order crossover algorithm.}
+\label{fig:boci}
+\end{figure}
+
+\textbf{kca\_k} defines the number of clusters that graph nodes should be split into. This parameter is usually specified as a proportion of the chromosome length. As the minuscule p-values for the parameter and the visualization in Figure \ref{fig:kcai} suggests,  more clusters lead to lower fitness values in the initial population. Therefore, the number of clusters has a statistically significant effect on the initial population fitness values that the algorithm starts out with.
+
+\begin{figure}[htbp]
+\centering
+\fbox{\includegraphics[width=\linewidth]{kcai.png}}
+\caption{Boxplots of three different parameters for the number of clusters in the k-means algorithm.}
+\label{fig:kcai}
+\end{figure}
+
+\textbf{kca\_iterations} describes the number of iterations performed in Step 3 of the k-means clustering algorithm outlined above. Note that, ideally Step 3 is performed until the clusters become constant between iterations. However, due to computational constraints, we refrain from doing so here. As the p-values and Figure \ref{fig:kci} indicate, there is insufficient evidence to claim that there is a statistically significant impact in varying levels of this parameter on the initial population’s fitness. However, one intriguing finding we obtained is that, as the above visualization indicates, as the numbers of iterations go up, the algorithm wounds up with worse fitness values, not better, which is the exact opposite of what we had hypothesized initially.
+It is likely that more iterations forces the chromosome into an even deeper local minima, which would need an aggressive strategy or new type of mutation operator to exit. Certain alleles will be forced to be occupy a good, but not optimal, loci. It is the author's belief that it is prudent to limit this parameter to a very small number, otherwise a new strategy would be required to ascend the fitness landscape.
+
+\begin{figure}[htbp]
+\centering
+\fbox{\includegraphics[width=\linewidth]{kci.png}}
+\caption{Boxplots of three different parameters for the number of iterations in the k-means algorithm.}
+\label{fig:kci}
+\end{figure}
 
 
-Figure \ref{fig:mg} gives a clear indication of the performance of each mutation operator. There is a clear gap in the performance as evidenced by the non-overlapping range of samples. It is evident that the best performing mutation operators are cyclic and scramble, however we cannot make any conclusion as to which is better. Looking at the notched boxplots in Figure \ref{fig:bpm} we notice that, between cyclic and scramble, the confidence intervals and median are nearly the same. The scramble mutation has a slightly larger range in the right tail, but there is not enough information to determine whether or not this is statistically significant.
+\subsection{Implementation Performance}
+A variety of techniques were used to improve the performance, however more work needs to be done in this area. A complete understanding of how to use libraries like NumPy and Numba would speed up the algorithm considerably. The main focus of the program was on algorithms and ease-of-use, with the hope that multithreading would bridge the performance gap. This turned out to be a problem, since the main Python interpreter includes a \textit{Global Interpret Lock}, which only allows one thread to execute at a time. Without this constraint, multithreading would have been helpful in parallelising the calculations involved. Several attempts were made to use multiprocessing instead, but the overhead associated with this was not worth the effort. In many cases, the algorithm became slower. At other times, it overwhelmed the garbage collection of the Python interpreter by spawning many copies of the local memory spaces, only to immediately remove them as soon as the calculation had finished.
 
-It is important to note that the resultant mean fitness of both cyclic and scramble is about 104,000. This 131\% of the optimum distance of 79,114. This result is acceptable to us, in that we have only calculated 1000 generations to achieve this result.
+Constant time array look-ups are used wherever possible. The matrix describing the distances between all sets of nodes is generated and cached to a file to speed up subsequent runs. Recombination is the choke point of this algorithm, as best-order provides a description that depends on certain mathematical constraints on the sequence of cutting points on the chromosome. Unfortunately, the authors were unable to determine an iterative solution to the generation of cutting points. Instead random points were generated and tested against the constraints. Despite this, the recombination time is very reasonable, considering its complexity.
+
+The k-means clustering algorithm also takes considerable time to run, however the cost is worth it. The reduction in the search space cuts several thousand years off of the computational time. There are libraries available to implement clustering algorithms, such as SciPy. The authors opted to write an implementation of k-means from scratch so that inferences could be made from the intermediary results.
 
 \section{Conclusion}
-Given more time, considerable focus should be spent on determining a method to get a closer match to the optimal ordering of clusters. There is potential to use a cluster-boundary informed sub-segment swap to as a mutation operator to further optimize the algorithm. Raven's \textit{Biology}\cite{raven2001biology} describes the idea of \textit{transposons}, subsegments of a chromosome that can move to a different neighborhood.
+After determining the optimal parameter set, each of the data sets were ran thirty times to determine the optimal results and the algorithmic run times. 
+
+
+Given more time, considerable focus should be spent on determining a method to get a closer match to the optimal ordering of clusters. There is potential to use a cluster-boundary informed sub-segment swap to as a mutation operator to further optimize the algorithm. Raven's \textit{Biology}\cite{raven2001biology} describes the idea of \textit{transposons}, sub-segments of a chromosome that can move to a different neighborhood.
+
+Reinforcement learning is possibly another avenue for optimizing this algorithm. The survivor selection can become probabilistic depending on whether or not the fitness value has plateaued. Using temporal-difference learning would be ideal for this, as it would let the algorithm decide when to change strategies. It may be possible to exit local minima with this method. More testing into these methods may be warranted.
 
 \bigskip
 
