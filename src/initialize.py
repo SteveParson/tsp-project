@@ -70,10 +70,8 @@ def kmeans(args):
 
     # Get the number of clusters
     kca_k = args['kca_k']
-
-    # kca_k can also be a proportion of the chromosome length
-    if args['kca_proportion']:
-        kca_k = int(kca_k * chromosome_length)
+    # kca_k is a proportion of the chromosome length
+    kca_k = int(kca_k * chromosome_length)
 
     # Calculate cluster centers
     kca_cluster_centers = np.random.choice(range(chromosome_length), kca_k, replace=False)
@@ -128,8 +126,6 @@ def kmeans(args):
             low_idx = np.argmin(distances)
             low_city = kca_cluster_cities[cluster_idx][low_idx]
             kca_cluster_centers[cluster_idx] = low_city
-
-        # TODO: Try convex hull algorithm for this
 
         # Order all the clusters by their centers, so that the closest
         # clusters stay close to each other.

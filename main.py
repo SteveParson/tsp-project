@@ -21,10 +21,6 @@ def main():
     data_import.parse_datafile(args)
     data_import.calc_distance_matrix(args)
 
-    # TODO: This belongs somewhere else
-    # swap length is relative to the number of clusters
-    args['swap_length'] = 3
-
     # Display the runtime arguments to the user
     print_config(args)
 

@@ -185,8 +185,10 @@ def mutation(args):
 
     for i in range(len(offspring)):
         if random.random() < mutation_rate:
-            offspring[i] = mutation_func(offspring[i], length=args['swap_length'])
-
+            chromosome_length = len(args['population'][0])
+            kca_k = int(args['kca_k'] * chromosome_length)
+            length = int(chromosome_length / kca_k)
+            offspring[i] = mutation_func(offspring[i], length=length)
 
 def permutation_swap(individual, length=-1):
     """
