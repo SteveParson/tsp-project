@@ -79,9 +79,7 @@ def main():
             if cmd_args.visualize:
                 evaluate.plot(args)
 
-        evaluate.print_final(args, export_fp, run_num,
-                             cmd_args.visualize,
-                             cmd_args.export)
+        evaluate.print_final(args, export_fp, run_num, cmd_args.export)
 
 
 if __name__ == "__main__":

@@ -69,7 +69,7 @@ def plot(args):
     args['plotter'].plot()
 
 
-def print_final(args, export_fp, run_num, visualize=False, export=False):
+def print_final(args, export_fp, run_num, export=False):
     """
     Print the final fitness values
 
@@ -88,13 +88,14 @@ def print_final(args, export_fp, run_num, visualize=False, export=False):
             writer = csv.writer(csvfile, delimiter=',')
             writer.writerow([run_num, -args['fitness'][distribution[0]]])
 
-    # TODO: Change this check to look for args['plotter'] instead, so that we
-    # TODO: can loose the parameter in the method
     # We need to halt the program so that the user can examine the plots
-    if visualize: input()
+    if args.get('plotter') is not None:
+        try:
+            input()
+        except KeyboardInterrupt:
+            print("\nExiting...")
 
 
-# TODO: Merge the function with the other one
 def eval_offspring(args):
     population = args['offspring']
     distance_matrix = args['distance_matrix']
