@@ -65,7 +65,8 @@ def recombination(args):
 
 
 def best_order(J, n, parent1, parent2, best_individual):
-    """ Applies best-order crossover and produces two offspring
+    """
+    Applies best-order crossover and produces two offspring
     using the order information from three parents.
 
     :param J: The length of our chromosome
@@ -82,22 +83,27 @@ def best_order(J, n, parent1, parent2, best_individual):
 
     bad_cutting_point_sequence = True
     while bad_cutting_point_sequence:
+        # Randomly pick the desired number of crossover points.
+        # Constraint 1 <= q1 < q2 < ... < qn < J.
         subarray = np.random.choice(np.arange(1, J), n - 2, replace=False)
         subarray.sort()
         q[1:n - 1] = subarray
 
         if len(q) != n:
             die("wrong size")
-        # hypothesis: cutting point sequence is good
+        # Hypothesis: cutting point sequence is good
         bad_cutting_point_sequence = False
 
-        # try to disprove the hypothesis at every cutting point
+        # Try to disprove the hypothesis at every cutting point
         for i in range(0, len(q) - 1):
             l_i = q[i + 1] - q[i]
+            # Constraint on length of subsequences:
+            # 0 <= l_i <= J / 3
             if not (0 <= l_i and l_i <= J // 3):
                 bad_cutting_point_sequence = True
 
-    # assign a parent for each sequence
+    # For each resulting sub-sequence,
+    # Generate a random integer r, between [1, 3] (inclusive)
     parent_choices = [random.randint(1, 3) for subsequence in range(n - 1)]
 
     offspring1 = np.zeros(J, dtype=int)
@@ -108,14 +114,21 @@ def best_order(J, n, parent1, parent2, best_individual):
         ep = q[i + 1]
 
         if parent_choices[i] == 1:
+            # If r == 1, then the alleles corresponding to this sub-sequence will
+            # be taken from Parent 1 in the order that they are in Parent 1.
             alleles1 = parent1[sp:ep]
             alleles2 = parent2[sp:ep]
 
         if parent_choices[i] == 2:
+            # If r == 2, then the alleles corresponding to this sub-sequence will
+            # be taken from Parent 1, but in the order that they appear in Parent 2.
             alleles1 = order_subset_from_full_set(parent1[sp:ep], parent2)
             alleles2 = order_subset_from_full_set(parent2[sp:ep], parent1)
 
         if parent_choices[i] == 3:
+            # If r == 3, then the alleles corresponding to this sub-sequence will
+            # be taken from Parent 1, but in the order that they appear in the best
+            # individual obtained up till the current generation.
             alleles1 = order_subset_from_full_set(parent1[sp:ep], best_individual)
             alleles2 = order_subset_from_full_set(parent2[sp:ep], best_individual)
 
