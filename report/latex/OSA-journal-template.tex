@@ -173,7 +173,7 @@ For all results in this section, the Uruguay data set was used as the basis of c
 \begin{table}[htbp]
 \centering
 \caption{\bf Parameters Of The Hybrid Genetic Algorithm}
-\begin{tabular}{ccc}
+\begin{tabular}{lll}
 \hline
 Parameter & Value \\
 \hline
@@ -184,10 +184,13 @@ Mating Pool Size && $10$ \\
 Tournament Size && $5$ \\
 Crossover Rate && $90\%$ \\
 Mutation Rate && $80\%$ \\
+Parent Selection && Tournament \\
+Survivor Selection && $\mu + \lambda$ \\
 Generations && $1000$ \\
 BOX Cutting Points && $240$ \\
 K-Means Clusters && $220$ \\
 K-Means Iterations && $5$ \\
+
 
 
 \hline
@@ -273,7 +276,7 @@ The Python implementation described in this paper uses a number of parameters wh
 \label{fig:boci}
 \end{figure}
 
-\textbf{kca\_k} defines the number of clusters that graph nodes should be split into. This parameter is usually specified as a proportion of the chromosome length. As the minuscule p-values for the parameter and the visualization in Figure \ref{fig:kcai} suggests,  more clusters lead to lower fitness values in the initial population. Therefore, the number of clusters has a statistically significant effect on the initial population fitness values that the algorithm starts out with.
+\textbf{kca\_k} defines the number of clusters that graph nodes should be split into. This parameter is usually specified as a proportion of the chromosome length. As the minuscule p-values for the statistical tests of the parameter and the visualization in Figure \ref{fig:kcai} suggests,  more clusters lead to lower fitness values in the initial population. Therefore, the number of clusters has a statistically significant effect on the initial population fitness values that the algorithm starts with.
 
 \begin{figure}[htbp]
 \centering
@@ -294,19 +297,141 @@ It is likely that more iterations forces the chromosome into an even deeper loca
 
 
 \subsection{Implementation Performance}
-A variety of techniques were used to improve the performance, however more work needs to be done in this area. A complete understanding of how to use libraries like NumPy and Numba would speed up the algorithm considerably. The main focus of the program was on algorithms and ease-of-use, with the hope that multithreading would bridge the performance gap. This turned out to be a problem, since the main Python interpreter includes a \textit{Global Interpret Lock}, which only allows one thread to execute at a time. Without this constraint, multithreading would have been helpful in parallelising the calculations involved. Several attempts were made to use multiprocessing instead, but the overhead associated with this was not worth the effort. In many cases, the algorithm became slower. At other times, it overwhelmed the garbage collection of the Python interpreter by spawning many copies of the local memory spaces, only to immediately remove them as soon as the calculation had finished.
+A variety of techniques were used to improve the performance, however more work needs to be done in this area. A complete understanding of how to use libraries like NumPy and Numba would speed up the algorithm considerably. The main focus of the program was on algorithms and ease-of-use, with the hope that multi-threading would bridge the performance gap. This turned out to be a problem, since the main Python interpreter includes a \textit{Global Interpreter Lock}, which only allows one thread to execute at a time. Without this constraint, multi-threading would have been helpful in parallelising the calculations involved. Several attempts were made to use multiprocessing instead, but the overhead associated with this was not worth the effort. In many cases, the algorithm became slower. At other times, it overwhelmed the garbage collection of the Python interpreter by spawning many copies of the local memory spaces, only to immediately remove them as soon as the calculation had finished.
 
 Constant time array look-ups are used wherever possible. The matrix describing the distances between all sets of nodes is generated and cached to a file to speed up subsequent runs. Recombination is the choke point of this algorithm, as best-order provides a description that depends on certain mathematical constraints on the sequence of cutting points on the chromosome. Unfortunately, the authors were unable to determine an iterative solution to the generation of cutting points. Instead random points were generated and tested against the constraints. Despite this, the recombination time is very reasonable, considering its complexity.
 
 The k-means clustering algorithm also takes considerable time to run, however the cost is worth it. The reduction in the search space cuts several thousand years off of the computational time. There are libraries available to implement clustering algorithms, such as SciPy. The authors opted to write an implementation of k-means from scratch so that inferences could be made from the intermediary results.
 
 \section{Conclusion}
-After determining the optimal parameter set, each of the data sets were ran thirty times to determine the optimal results and the algorithmic run times. 
+Using the new information about the parameter set, each of the data sets were run to determine optimal results and the algorithmic run times. A summary of these parameters are in Table \ref{tab:parameters2}. 
 
+\begin{table}[htbp]
+\centering
+\caption{\bf Parameters Of The Hybrid Genetic Algorithm}
+\begin{tabular}{lll}
+\hline
+Parameter && Value \\
+\hline
+Init. Method && $k-means$ \\
+Tournament Size && $5$ \\
+Recombination && $Best-order$ \\
+Mutation && $Cyclic$ \\
+Crossover Rate && $90\%$ \\
+Mutation Rate && $80\%$ \\
+Parent Selection && Tournament \\
+Survivor Selection && $\mu + \lambda$ \\
+\hline
+\end{tabular}
+  \label{tab:parameters2}
+\end{table}
+
+Each data set is tested with the parameters from Table \ref{tab:parameters2}, and a specific set of parameters crafted for the data set itself. For the Western Sahara, Uruguay and Canada data sets, please refer to Tables \ref{tab:wh}, \ref{tab:ur}, and \ref{tab:can} respectively.
+
+\begin{table}[htbp]
+\centering
+\caption{\bf Western Sahara Specific Parameters}
+\begin{tabular}{lll}
+\hline
+Parameter && Value \\
+\hline
+Pop. Size && $200$ \\
+Mating Pool Size && $100$ \\
+Generations && $250$ \\
+BOX Cutting Points && $6$ \\
+K-Means Clusters && $14$ \\
+K-Means Iterations && $10$ \\
+\hline
+\end{tabular}
+  \label{tab:wh}
+\end{table}
+The performance of the algorithms and the paths produced are excellent. As summarized by Table \ref{tab:sum}, we reach 113\% of the optimal tour length on the Uruguay in under four minutes. The Western Sahara performance is even better, at 104\% of the optimal tour length in under four \textbf{seconds}. 
+
+\begin{table}[htbp]
+\centering
+\caption{\bf Uruguay Specific Parameters}
+\begin{tabular}{lll}
+\hline
+Parameter && Value \\
+\hline
+Pop. Size && $20$ \\
+Mating Pool Size && $10$ \\
+Generations && $1000$ \\
+BOX Cutting Points && $240$ \\
+K-Means Clusters && $513$ \\
+K-Means Iterations && $10$ \\
+\hline
+\end{tabular}
+  \label{tab:ur}
+\end{table}
+
+The performance of the Canada data set is at a respectable 185\% of the optimal tour length of 1,209,319, taking about forty-seven minutes to compute this result. 
+
+\begin{table}[htbp]
+\centering
+\caption{\bf Canada Specific Parameters}
+\begin{tabular}{lll}
+\hline
+Parameter && Value \\
+\hline
+Pop. Size && $20$ \\
+Mating Pool Size && $10$ \\
+Generations && $1000$ \\
+BOX Cutting Points && $240$ \\
+K-Means Clusters && $466$ \\
+K-Means Iterations && $1$ \\
+\hline
+\end{tabular}
+  \label{tab:can}
+\end{table}
 
 Given more time, considerable focus should be spent on determining a method to get a closer match to the optimal ordering of clusters. There is potential to use a cluster-boundary informed sub-segment swap to as a mutation operator to further optimize the algorithm. Raven's \textit{Biology}\cite{raven2001biology} describes the idea of \textit{transposons}, sub-segments of a chromosome that can move to a different neighborhood.
 
-Reinforcement learning is possibly another avenue for optimizing this algorithm. The survivor selection can become probabilistic depending on whether or not the fitness value has plateaued. Using temporal-difference learning would be ideal for this, as it would let the algorithm decide when to change strategies. It may be possible to exit local minima with this method. More testing into these methods may be warranted.
+\begin{table}[htbp]
+%\centering
+\caption{\bf Algorithmic Performance}
+\begin{tabular}{llll}
+\hline
+Canada \\
+\hline
+Nodes && $4663$ \\
+Runs && $10$ \\
+Optimal Fitness && $1,290,319$ \\
+Best Fitness && $2,386,224$ \\
+Avg. Fitness && $2,419,502$ \\
+Best Time && $46.79$ minutes \\
+Avg. Time && $47.08$ minutes \\
+\hline
+\hline
+Uruguay \\
+\hline
+Nodes && $734$ \\
+Runs && $30$ \\
+Optimal Fitness && $79,114$ \\
+Best Fitness && $94,478$ \\
+Avg. Fitness && $96,262$ \\
+Best Time && $3.01$ minutes \\
+Avg. Time && $3.32$ minutes \\
+\hline
+\hline
+W. Sahara \\
+\hline
+Nodes && $29$ \\
+Runs && $10$ \\
+Optimal Fitness && $27,603$ \\
+Best Fitness && $28588$ \\
+Avg. Fitness && $28756$ \\
+Best Time && $4.92$ seconds \\
+Avg. Time && $8.34$ seconds \\
+\hline
+\hline
+\end{tabular}
+  \label{tab:sum}
+\end{table}
+
+Reinforcement learning is possibly another avenue for optimizing this algorithm. The survivor selection can become probabilistic depending on whether or not the fitness value has plateaued. Using temporal-difference learning would be ideal for this, as it would let the algorithm decide when to change strategies. It may be possible to exit local minima with this method. More testing into these methods is warranted.
+
+The fitness landscape of this particular problem set is rife with local minima. One method that may help overcome this is to use a dynamic fitness landscape. This idea, partially inspired by Glover's Tabu search algorithm\cite{wiki:xxx}, makes a given fitness value less attractive each time it is encountered. This is implemented by adding a mapping to the fitness values that adds a small value each time the value is encountered. Initial experiments yielded good results, however more research should be done to make any significant conclusions.
 
 \bigskip
 
