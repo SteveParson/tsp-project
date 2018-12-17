@@ -1,11 +1,11 @@
 {
     "datafile": "data/TSP_Uruguay_734.txt",
     "pop_size": 20,
-    "initialize_method": "kmeans",
+    "initialize_method": "random",
     "mp_size": 10,
     "tournament_size": 5,
     "recombination": "best_order",
-    "mutation": "cyclic",
+    "mutation": "scramble",
     "crossover_rate": 0.9,
     "mutation_rate": 0.8,
     "generations": 1000,
