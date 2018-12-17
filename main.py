@@ -79,7 +79,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # If we're on MacOSX, praise Steve Jobs first
     if plt.get_backend() == "MacOSX":
         mp.set_start_method("forkserver")
     main()
